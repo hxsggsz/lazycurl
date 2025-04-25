@@ -9,7 +9,7 @@ import (
 func layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
 
-	if err := input.CreateInputView(g, maxX); err != nil {
+	if _, err := input.CreateInputView(g, maxX); err != nil {
 		return err
 	}
 
