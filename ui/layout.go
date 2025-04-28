@@ -1,7 +1,8 @@
 package ui
 
 import (
-	"lazycurl/ui/components/input"
+	"lazycurl/ui/components"
+	"log"
 
 	"github.com/awesome-gocui/gocui"
 )
@@ -9,14 +10,17 @@ import (
 func layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
 
-	if _, err := input.CreateInputView(g, maxX); err != nil {
+	value, err := components.Input(g, maxX)
+	if err != nil {
 		return err
 	}
 
-	if _, err := g.SetView("main", 0, 3, maxX-1, maxY-1, 0); err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
+	// essa funćão é chamada toda hora então usar os logs apenas em aćoes do usuário para o notifica-lo uma vez
+	log.Println("digitado ->", value)
+
+	if err := components.Output(g, maxX, maxY); err != nil {
+		return err
 	}
+
 	return nil
 }

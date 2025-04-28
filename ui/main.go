@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"lazycurl/output"
 	"lazycurl/ui/options"
 	"log"
 
@@ -15,6 +16,8 @@ func InitLayout() {
 	defer g.Close()
 
 	g.SetManagerFunc(layout)
+
+	log.SetOutput(&output.LogViewWriter{Gui: g})
 
 	options.QuitKeyByind(g)
 

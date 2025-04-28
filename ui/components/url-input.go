@@ -1,4 +1,4 @@
-package input
+package components
 
 import (
 	"lazycurl/ui/utils"
@@ -17,7 +17,7 @@ func inputViewConfig(g *gocui.Gui, v *gocui.View, viewName string) {
 	}
 }
 
-func CreateInputView(g *gocui.Gui, maxX int) (string, error) {
+func Input(g *gocui.Gui, maxX int) (string, error) {
 	viewName := "input"
 	if v, err := g.SetView(viewName, 0, 0, maxX-1, 2, 0); err != nil {
 		if err != gocui.ErrUnknownView {
@@ -35,5 +35,6 @@ func CreateInputView(g *gocui.Gui, maxX int) (string, error) {
 	if err != nil {
 		log.Panicf("not found view -> %v", viewName)
 	}
+
 	return inputView.Buffer(), nil
 }
