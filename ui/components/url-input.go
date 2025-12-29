@@ -24,11 +24,10 @@ func Input(g *gocui.Gui, maxX int) (string, error) {
 			return "", err
 		}
 
-		inputViewConfig(g, v, viewName)
-
 		// default focus when iniciate the view
 		g.SetCurrentView(viewName)
 
+		inputViewConfig(g, v, viewName)
 	}
 
 	inputView, err := g.View(viewName)
