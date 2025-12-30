@@ -1,14 +1,15 @@
-package views
+package collection
 
 import (
 	"fmt"
 	"lazycurl/ui/utils"
+	"lazycurl/ui/views"
 
 	"github.com/awesome-gocui/gocui"
 )
 
 func Body(g *gocui.Gui, maxX, maxY int) error {
-	viewName := BODY
+	viewName := views.BODY
 	height := maxY - 3 // reservar espaço para a view de logs
 
 	x0 := 0
@@ -28,7 +29,7 @@ func Body(g *gocui.Gui, maxX, maxY int) error {
 		v.Wrap = true
 		g.Cursor = true
 		g.SetViewOnBottom(viewName)
-		HandleBlurInput(g, viewName)
+		views.HandleBlurInput(g, viewName)
 	}
 	return nil
 }

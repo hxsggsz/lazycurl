@@ -2,6 +2,7 @@ package ui
 
 import (
 	"lazycurl/ui/views"
+	"lazycurl/ui/views/collection"
 	"log"
 
 	"github.com/awesome-gocui/gocui"
@@ -10,7 +11,7 @@ import (
 func layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
 
-	typedValue, err := views.Input(g, maxX)
+	typedValue, err := collection.Input(g, maxX)
 	if err != nil {
 		return err
 	}
@@ -24,7 +25,11 @@ func layout(g *gocui.Gui) error {
 		return err
 	}
 
-	if err := views.Body(g, maxX, maxY); err != nil {
+	if err := collection.Body(g, maxX, maxY); err != nil {
+		return err
+	}
+
+	if err := collection.Response(g, maxX, maxY); err != nil {
 		return err
 	}
 

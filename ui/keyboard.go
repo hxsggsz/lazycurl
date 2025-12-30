@@ -9,6 +9,7 @@ import (
 
 var GlobalViewMap = map[rune]string{
 	'1': views.URL, '2': views.BODY,
+	'3': views.RESPONSE,
 }
 
 func RegisterGlobalNumericNavigation(g *gocui.Gui) error {

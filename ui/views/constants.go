@@ -1,7 +1,8 @@
 package views
 
 const (
-	URL  = "url"
-	BODY = "body"
-	LOGS = "logs"
+	URL      = "url"
+	BODY     = "body"
+	RESPONSE = "response"
+	LOGS     = "logs"
 )
