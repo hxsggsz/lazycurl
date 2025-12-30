@@ -18,8 +18,13 @@ func inputViewConfig(g *gocui.Gui, v *gocui.View) {
 
 func Input(g *gocui.Gui, maxX int) (string, error) {
 	viewName := views.URL
+	x0 := views.FULL
+	y0 := views.FULL
 
-	if v, err := g.SetView(viewName, 0, 0, maxX-1, 2, 0); err != nil {
+	x1 := maxX - views.LAYOUT_SECTION_Y_GAP
+	y1 := views.LAYOUT_INPUT_HEIGHT
+
+	if v, err := g.SetView(viewName, x0, y0, x1, y1, 0); err != nil {
 		if err != gocui.ErrUnknownView {
 			return "", err
 		}

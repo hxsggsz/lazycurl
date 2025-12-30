@@ -8,29 +8,16 @@ import (
 	"github.com/awesome-gocui/gocui"
 )
 
-const (
-	LayoutInputHeight = 1
-	LayoutSectionGap  = 2
-	LogsHeight        = 3
-)
-
-const (
-	InputTop    = 0
-	InputHeight = LayoutInputHeight
-	BodyTop     = LayoutInputHeight + LayoutSectionGap
-)
-
 func Response(g *gocui.Gui, maxX, maxY int) error {
 	viewName := views.RESPONSE
-	height := maxY - LogsHeight // reservar espaço para logs
+	height := maxY - views.LOGS_HEIGHT
 
-	// Largura: 50% da tela, posicionada à DIREITA
 	width := maxX / 2
-	x0 := width + LayoutSectionGap
-	x1 := maxX - 1
+	x0 := width + views.LAYOUT_SECTION_X_GAP
+	x1 := maxX - views.RIGHT_BORDER
 
-	y0 := BodyTop // Sem magic number!
-	y1 := height - 1
+	y0 := views.LAYOUT_INPUT_HEIGHT + views.LAYOUT_SECTION_Y_GAP
+	y1 := height - views.LOGS_BOTTOM
 
 	if v, err := g.SetView(viewName, x0, y0, x1, y1, 0); err != nil {
 		if err != gocui.ErrUnknownView {

@@ -10,13 +10,13 @@ import (
 
 func Body(g *gocui.Gui, maxX, maxY int) error {
 	viewName := views.BODY
-	height := maxY - 3 // reservar espaço para a view de logs
+	height := maxY - views.LOGS_HEIGHT
 
-	x0 := 0
+	x0 := views.FULL
 	x1 := maxX / 2
 
-	y0 := 3
-	y1 := height - 1
+	y0 := views.LAYOUT_INPUT_HEIGHT + views.LAYOUT_SECTION_Y_GAP
+	y1 := height - views.LOGS_BOTTOM
 
 	if v, err := g.SetView(viewName, x0, y0, x1, y1, 0); err != nil {
 		if err != gocui.ErrUnknownView {
