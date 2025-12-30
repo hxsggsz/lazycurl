@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"lazycurl/ui/components"
+	"lazycurl/ui/views"
 	"log"
 
 	"github.com/awesome-gocui/gocui"
@@ -10,17 +10,24 @@ import (
 func layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
 
-	value, err := components.Input(g, maxX)
+	typedValue, err := views.Input(g, maxX)
 	if err != nil {
 		return err
 	}
 
-	// essa funćão é chamada toda hora então usar os logs apenas em aćoes do usuário para o notifica-lo uma vez
-	log.Println("digitado ->", value)
+	if typedValue != "" {
+		// essa funćão é chamada toda hora então usar os logs apenas em ações do usuário para o notifica-lo uma vez
+		log.Println("digitando ->", typedValue)
+	}
 
-	if err := components.Output(g, maxX, maxY); err != nil {
+	if err := views.Output(g, maxX, maxY); err != nil {
 		return err
 	}
 
+	if err := views.Body(g, maxX, maxY); err != nil {
+		return err
+	}
+
+	RegisterGlobalNumericNavigation(g)
 	return nil
 }
