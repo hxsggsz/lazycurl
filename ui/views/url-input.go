@@ -15,13 +15,6 @@ func inputViewConfig(g *gocui.Gui, v *gocui.View) {
 
 }
 
-func blurInput(g *gocui.Gui, v *gocui.View) error {
-	_, err := g.SetCurrentView(LOGS)
-	v.FrameColor = gocui.ColorWhite
-	v.TitleColor = gocui.ColorWhite
-	return err
-}
-
 func Input(g *gocui.Gui, maxX int) (string, error) {
 	viewName := URL
 
@@ -33,10 +26,7 @@ func Input(g *gocui.Gui, maxX int) (string, error) {
 		// default focus when iniciate the view
 		g.SetCurrentView(viewName)
 		inputViewConfig(g, v)
-
-		if err := g.SetKeybinding(viewName, gocui.KeyEsc, gocui.ModNone, blurInput); err != nil {
-			return "", err
-		}
+		HandleBlurInput(g, viewName)
 
 		if hasFocus := utils.ViewHasFocus(g, viewName); hasFocus {
 			v.FrameColor = gocui.ColorGreen
