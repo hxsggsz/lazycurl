@@ -11,7 +11,7 @@ func quit(g *gocui.Gui, v *gocui.View) error {
 }
 
 func QuitKeyByind(g *gocui.Gui) {
-	keysToQuit := []any{gocui.KeyCtrlC, 'q'}
+	keysToQuit := []any{gocui.KeyCtrlC}
 
 	for _, key := range keysToQuit {
 		if err := g.SetKeybinding("", key, gocui.ModNone, quit); err != nil {

@@ -24,7 +24,7 @@ func Response(g *gocui.Gui, maxX, maxY int) error {
 			return err
 		}
 
-		v.Title = fmt.Sprintf("[%d] %s", 3, utils.Capitalize(viewName))
+		v.Title = fmt.Sprintf("[%d] %s", 4, utils.Capitalize(viewName))
 		v.Autoscroll = false
 		v.Wrap = true
 		g.Cursor = true

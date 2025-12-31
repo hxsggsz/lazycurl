@@ -8,8 +8,8 @@ import (
 )
 
 var globalViewMap = map[rune]string{
-	'1': views.URL, '2': views.BODY,
-	'3': views.RESPONSE,
+	'1': views.METHOD, '2': views.URL, '3': views.BODY,
+	'4': views.RESPONSE,
 }
 
 func RegisterGlobalNumericNavigation(g *gocui.Gui) error {

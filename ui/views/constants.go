@@ -1,6 +1,7 @@
 package views
 
 const (
+	METHOD   = "method"
 	URL      = "url"
 	BODY     = "body"
 	RESPONSE = "response"
@@ -8,7 +9,7 @@ const (
 )
 
 const (
-	FULL = 0
+	FULL                 = 0
 	LOGS_BOTTOM          = 1
 	LOGS_HEIGHT          = 3
 	LAYOUT_INPUT_HEIGHT  = 2
