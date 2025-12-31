@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"lazycurl/ui/keyboard"
 	"lazycurl/ui/views"
 	"lazycurl/ui/views/collection"
 	"log"
@@ -21,10 +22,6 @@ func layout(g *gocui.Gui) error {
 		log.Println("digitando ->", typedValue)
 	}
 
-	if err := views.Output(g, maxX, maxY); err != nil {
-		return err
-	}
-
 	if err := collection.Body(g, maxX, maxY); err != nil {
 		return err
 	}
@@ -33,6 +30,13 @@ func layout(g *gocui.Gui) error {
 		return err
 	}
 
-	RegisterGlobalNumericNavigation(g)
+	if err := views.Output(g, maxX, maxY); err != nil {
+		return err
+	}
+
+	keyboard.RegisterGlobalNumericNavigation(g)
+	keyboard.RegisterGlobalSubmit(g)
+	keyboard.RegisterGlobalViewNavigation(g)
+
 	return nil
 }

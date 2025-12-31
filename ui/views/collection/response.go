@@ -25,10 +25,10 @@ func Response(g *gocui.Gui, maxX, maxY int) error {
 		}
 
 		v.Title = fmt.Sprintf("[%d] %s", 3, utils.Capitalize(viewName))
-		v.Autoscroll = true
+		v.Autoscroll = false
 		v.Wrap = true
 		g.Cursor = true
-		g.SetViewOnBottom(viewName)
 	}
+
 	return nil
 }
