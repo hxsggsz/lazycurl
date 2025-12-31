@@ -10,7 +10,7 @@ import (
 )
 
 func inputViewConfig(g *gocui.Gui, v *gocui.View) {
-	v.Title = fmt.Sprintf("[%d] %s", 1, utils.Capitalize(views.URL))
+	v.Title = fmt.Sprintf("[%d] %s", 2, utils.Capitalize(views.URL))
 	v.Editable = true
 	g.Cursor = true
 
@@ -18,7 +18,7 @@ func inputViewConfig(g *gocui.Gui, v *gocui.View) {
 
 func Input(g *gocui.Gui, maxX int) (string, error) {
 	viewName := views.URL
-	x0 := views.FULL
+	x0 := 10 // views.FULL
 	y0 := views.FULL
 
 	x1 := maxX - views.LAYOUT_SECTION_Y_GAP

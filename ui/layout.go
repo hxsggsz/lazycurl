@@ -12,6 +12,10 @@ import (
 func layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
 
+	if err := collection.Method(g, maxX, maxY); err != nil {
+		return err
+	}
+
 	typedValue, err := collection.Input(g, maxX)
 	if err != nil {
 		return err

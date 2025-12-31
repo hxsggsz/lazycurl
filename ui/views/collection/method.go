@@ -3,11 +3,14 @@ package collection
 import (
 	"fmt"
 	"lazycurl/pkg/request"
+	"lazycurl/ui/utils"
 	"lazycurl/ui/views"
 	"log"
 
 	"github.com/awesome-gocui/gocui"
 )
+
+var methods = []string{request.GET, request.POST, request.PUT, request.DELETE, request.HEAD, request.PATCH, request.OPTIONS}
 
 func Method(g *gocui.Gui, maxX, maxY int) error {
 	viewName := views.METHOD
@@ -45,7 +48,7 @@ func openMethodModal(g *gocui.Gui, v *gocui.View) error {
 
 	// Modal centralizado
 	modalWidth := 20
-	modalHeight := 9
+	modalHeight := 8
 	x0 := (maxX - modalWidth) / 2
 	y0 := (maxY - modalHeight) / 2
 	x1 := x0 + modalWidth
@@ -63,33 +66,13 @@ func openMethodModal(g *gocui.Gui, v *gocui.View) error {
 		v.SelBgColor = gocui.ColorGreen
 		v.Highlight = true
 
-		methods := []string{request.GET, request.POST, request.PUT, request.DELETE, request.HEAD, request.PATCH, request.OPTIONS}
 		for _, method := range methods {
 			fmt.Fprintln(v, method)
 		}
 
-		if err := RegisterGlobalViewNavigation(g); err != nil {
-			return err
-		}
-		// Enter: seleciona e fecha
-		if err := g.SetKeybinding("methodModal", gocui.KeyEnter, gocui.ModNone, selectMethod); err != nil {
-			return err
-		}
+		v.ViewLinesHeight()
 
-		// ESC: fecha sem selecionar
-		if err := g.SetKeybinding("methodModal", gocui.KeyEsc, gocui.ModNone, closeMethodModal); err != nil {
-			return err
-		}
-
-		if err := g.SetKeybinding("methodModal", gocui.KeyEsc, gocui.ModNone, closeMethodModal); err != nil {
-			return err
-		}
-
-		// Navegação
-		if err := g.SetKeybinding("methodModal", gocui.KeyArrowDown, gocui.ModNone, moveDownModal); err != nil {
-			return err
-		}
-		if err := g.SetKeybinding("methodModal", gocui.KeyArrowUp, gocui.ModNone, moveUpModal); err != nil {
+		if err := registerMethodViewNavigation(g); err != nil {
 			return err
 		}
 
@@ -98,27 +81,24 @@ func openMethodModal(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func RegisterGlobalViewNavigation(g *gocui.Gui) error {
+func registerMethodViewNavigation(g *gocui.Gui) error {
 	methodModalKeymaps := map[gocui.Key]func(g *gocui.Gui, v *gocui.View) error{
 		'q': closeMethodModal, gocui.KeyEsc: closeMethodModal,
 		gocui.KeyEnter: selectMethod, gocui.KeyArrowDown: moveDownModal,
-		gocui.KeyArrowUp: moveUpModal,
+		'j': moveDownModal, gocui.KeyArrowUp: moveUpModal,
+		'k': moveUpModal,
 	}
 
-	for key, handler := range methodModalKeymaps {
-		if err := g.SetKeybinding(views.METHOD, key, gocui.ModNone, handler); err != nil {
-			return err
-		}
+	if err := utils.SetKeybind(g, methodModalKeymaps, "methodModal"); err != nil {
+		return err
 	}
 
 	return nil
 }
 
 func selectMethod(g *gocui.Gui, v *gocui.View) error {
-	// Pega a posição do cursor
 	_, cy := v.Cursor()
 
-	// Pega a linha na posição do cursor
 	line, err := v.Line(cy)
 	if err != nil {
 		return err
@@ -151,23 +131,40 @@ func closeMethodModal(g *gocui.Gui, v *gocui.View) error {
 }
 
 func moveDownModal(g *gocui.Gui, v *gocui.View) error {
-	cx, cy := v.Cursor()
-	if err := v.SetCursor(cx, cy+1); err != nil {
-		ox, oy := v.Origin()
-		v.SetOrigin(ox, oy+1)
-	}
+	g.Update(func(g *gocui.Gui) error {
+		if v == nil {
+			return nil
+		}
+
+		cx, cy := v.Cursor()
+
+		if cy < len(methods)-1 {
+			if err := v.SetCursor(cx, cy+1); err != nil {
+				return err
+			}
+		}
+
+		cx, cy = v.Cursor()
+		return nil
+	})
+
 	return nil
 }
 
 func moveUpModal(g *gocui.Gui, v *gocui.View) error {
-	cx, cy := v.Cursor()
-	if cy > 0 {
-		v.SetCursor(cx, cy-1)
-	} else {
-		ox, oy := v.Origin()
-		if oy > 0 {
+	g.Update(func(g *gocui.Gui) error {
+		if v == nil {
+			return nil
+		}
+
+		cx, cy := v.Cursor()
+
+		if err := v.SetCursor(cx, cy-1); err != nil {
+			ox, oy := v.Origin()
 			v.SetOrigin(ox, oy-1)
 		}
-	}
+
+		return nil
+	})
 	return nil
 }

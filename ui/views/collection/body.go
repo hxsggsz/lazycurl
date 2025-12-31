@@ -23,7 +23,7 @@ func Body(g *gocui.Gui, maxX, maxY int) error {
 			return err
 		}
 
-		v.Title = fmt.Sprintf("[%d] %s", 2, utils.Capitalize(viewName))
+		v.Title = fmt.Sprintf("[%d] %s", 3, utils.Capitalize(viewName))
 		v.Autoscroll = true
 		v.Editable = true
 		v.Wrap = true
