@@ -6,8 +6,9 @@ import (
 	"github.com/awesome-gocui/gocui"
 )
 
-func Body(g *gocui.Gui, maxX, maxY int) error {
-	viewName := views.BODY
+func Headers(g *gocui.Gui, maxX, maxY int) error {
+	viewName := views.HEADERS
+
 	height := maxY - views.LOGS_HEIGHT
 
 	x0 := views.FULL
@@ -21,13 +22,9 @@ func Body(g *gocui.Gui, maxX, maxY int) error {
 			return err
 		}
 
-		v.Title = "[3] *Body  Headers"
 		v.Editable = true
 		v.Wrap = true
-		v.Autoscroll = false
-
-		g.Cursor = true
-		views.HandleBlurInput(g, viewName)
+		v.Title = "[3]  Body *Headers"
 
 		if err := g.SetKeybinding(viewName, gocui.KeyArrowLeft, gocui.ModShift, prevTab); err != nil {
 			return err

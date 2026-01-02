@@ -1,7 +1,7 @@
 package keyboard
 
 import (
-	"log"
+	"lazycurl/ui/views"
 
 	"github.com/awesome-gocui/gocui"
 )
@@ -13,7 +13,7 @@ var viewNavigation = map[gocui.Key]func(g *gocui.Gui, v *gocui.View) error{
 
 func RegisterGlobalViewNavigation(g *gocui.Gui) error {
 	for key, handler := range viewNavigation {
-		if err := g.SetKeybinding("", key, gocui.ModNone, handler); err != nil {
+		if err := g.SetKeybinding(views.RESPONSE, key, gocui.ModNone, handler); err != nil {
 			return err
 		}
 	}
@@ -23,7 +23,6 @@ func RegisterGlobalViewNavigation(g *gocui.Gui) error {
 func scrollDown(g *gocui.Gui, v *gocui.View) error {
 	g.Update(func(g *gocui.Gui) error {
 		if v != nil {
-			log.Println("scrolling down")
 			ox, oy := v.Origin()
 			if err := v.SetOrigin(ox, oy+1); err != nil {
 				return err

@@ -10,8 +10,16 @@ import (
 )
 
 func RegisterGlobalSubmit(g *gocui.Gui) error {
-	if err := g.SetKeybinding("", gocui.KeyEnter, gocui.ModNone, submitHandler()); err != nil {
-		return err
+	viewsWithEnter := []string{
+		views.URL,
+		views.RESPONSE,
+		views.METHOD,
+	}
+
+	for _, name := range viewsWithEnter {
+		if err := g.SetKeybinding(name, gocui.KeyEnter, gocui.ModNone, submitHandler()); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -38,10 +46,8 @@ func UpdateResponseView(g *gocui.Gui, content string) error {
 		return err
 	}
 
-	// Limpa o conteúdo anterior
 	v.Clear()
 
-	// Escreve o novo conteúdo
 	fmt.Fprint(v, content)
 
 	return nil

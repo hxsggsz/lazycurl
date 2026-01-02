@@ -3,9 +3,17 @@ package views
 const (
 	METHOD   = "method"
 	URL      = "url"
+	TABS     = "tabs"
 	BODY     = "body"
+	HEADERS  = "headers"
 	RESPONSE = "response"
 	LOGS     = "logs"
+)
+
+const (
+	TABS_BAR    = "tabs-bar"
+	TAB_BODY    = "tab-body"
+	TAB_HEADERS = "tab-headers"
 )
 
 const (

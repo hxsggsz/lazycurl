@@ -16,7 +16,7 @@ func Method(g *gocui.Gui, maxX, maxY int) error {
 	viewName := views.METHOD
 
 	x0 := 0
-	x1 := maxX / 16
+	x1 := maxX / 18
 
 	y0 := 0
 	y1 := views.LAYOUT_INPUT_HEIGHT
@@ -77,16 +77,17 @@ func openMethodModal(g *gocui.Gui, v *gocui.View) error {
 		}
 
 		g.SetCurrentView("methodModal")
+
 	}
 	return nil
 }
 
 func registerMethodViewNavigation(g *gocui.Gui) error {
 	methodModalKeymaps := map[gocui.Key]func(g *gocui.Gui, v *gocui.View) error{
-		'q': closeMethodModal, gocui.KeyEsc: closeMethodModal,
-		gocui.KeyEnter: selectMethod, gocui.KeyArrowDown: moveDownModal,
-		'j': moveDownModal, gocui.KeyArrowUp: moveUpModal,
-		'k': moveUpModal,
+		gocui.KeyEsc:       closeMethodModal,
+		gocui.KeyEnter:     selectMethod,
+		gocui.KeyArrowDown: moveDownModal,
+		gocui.KeyArrowUp:   moveUpModal,
 	}
 
 	if err := utils.SetKeybind(g, methodModalKeymaps, "methodModal"); err != nil {

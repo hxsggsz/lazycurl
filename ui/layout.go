@@ -26,6 +26,14 @@ func layout(g *gocui.Gui) error {
 		log.Println("digitando ->", typedValue)
 	}
 
+	// if err := collection.Tabs(g, maxX, maxY); err != nil {
+	// 	return err
+	// }
+
+	if err := collection.Headers(g, maxX, maxY); err != nil {
+		return err
+	}
+
 	if err := collection.Body(g, maxX, maxY); err != nil {
 		return err
 	}
