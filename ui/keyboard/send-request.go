@@ -5,16 +5,24 @@ import (
 	"lazycurl/pkg/request"
 	"lazycurl/ui/views"
 	"log"
+	"strings"
 
 	"github.com/awesome-gocui/gocui"
 )
 
-var responseChan = make(chan string, 1)
+var (
+	Reset  = "\033[0m"
+	Red    = "\033[31m" // 5xx
+	Yellow = "\033[33m" // 4xx
+	Green  = "\033[32m" // 2xx
+
+	responseChan = make(chan string, 1)
+)
 
 func RegisterGlobalSubmit(g *gocui.Gui) error {
-	viewsWithEnter := []string{views.URL, views.RESPONSE, views.METHOD}
+	viewsToSubmitRequest := []string{views.URL, views.RESPONSE, views.METHOD}
 
-	for _, name := range viewsWithEnter {
+	for _, name := range viewsToSubmitRequest {
 		if err := g.SetKeybinding(name, gocui.KeyEnter, gocui.ModNone, submitHandler()); err != nil {
 			return err
 		}
@@ -40,11 +48,11 @@ func submitHandler() func(*gocui.Gui, *gocui.View) error {
 
 			res := request.RequestBuilder().
 				SetMethod(request.GET).
-				SetURL("https://jsonplaceholder.typicode.com/posts").
+				SetURL("https://jsonplaceholder.typicode.com/post").
 				Build()
 
-			log.Println("success!")
-			responseChan <- fmt.Sprintf("status: %d\n \n %s", res.StatusCode, res.Body)
+			statusMsg := coloredStatus(res.StatusCode)
+			responseChan <- fmt.Sprintf("status: %s \n \n %s", statusMsg, res.Body)
 		}()
 
 		return nil
@@ -65,4 +73,27 @@ func UpdateResponseView(g *gocui.Gui, content string) error {
 		return nil
 	})
 	return nil
+}
+
+func coloredStatus(statusCode int) string {
+	statusStr := fmt.Sprintf("status: %d", statusCode)
+	numStr := fmt.Sprintf("%d", statusCode)
+
+	firstDigit := statusCode / 100 // 2, 4 ou 5
+
+	var color string
+	switch {
+	case firstDigit == 2:
+		color = Green
+	case firstDigit == 4:
+		color = Yellow
+	case firstDigit == 5:
+		color = Red
+	default:
+		color = "" // Sem cor para outros (1xx, 3xx)
+	}
+
+	// Substitui o número pela versão colorida
+	idx := strings.Index(statusStr, numStr)
+	return color + numStr + Reset + statusStr[idx+len(numStr):]
 }

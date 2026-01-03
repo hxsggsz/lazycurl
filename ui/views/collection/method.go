@@ -15,8 +15,8 @@ var methods = []string{request.GET, request.POST, request.PUT, request.DELETE, r
 func Method(g *gocui.Gui, maxX, maxY int) error {
 	viewName := views.METHOD
 
-	x0 := 0
-	x1 := maxX / 18
+	x0 := views.FULL
+	x1 := 10 - views.LAYOUT_SECTION_Y_GAP
 
 	y0 := 0
 	y1 := views.LAYOUT_INPUT_HEIGHT
