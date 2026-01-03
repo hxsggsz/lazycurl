@@ -9,12 +9,10 @@ import (
 	"github.com/awesome-gocui/gocui"
 )
 
+var responseChan = make(chan string, 1)
+
 func RegisterGlobalSubmit(g *gocui.Gui) error {
-	viewsWithEnter := []string{
-		views.URL,
-		views.RESPONSE,
-		views.METHOD,
-	}
+	viewsWithEnter := []string{views.URL, views.RESPONSE, views.METHOD}
 
 	for _, name := range viewsWithEnter {
 		if err := g.SetKeybinding(name, gocui.KeyEnter, gocui.ModNone, submitHandler()); err != nil {
@@ -22,33 +20,49 @@ func RegisterGlobalSubmit(g *gocui.Gui) error {
 		}
 	}
 
+	go func() {
+		for content := range responseChan {
+			g.Update(func(g *gocui.Gui) error {
+				return UpdateResponseView(g, content)
+			})
+		}
+	}()
+
 	return nil
 }
 
 func submitHandler() func(*gocui.Gui, *gocui.View) error {
 	return func(g *gocui.Gui, v *gocui.View) error {
-		log.Printf("submitting request...")
+		responseChan <- "loading..."
 
-		res := request.RequestBuilder().
-			SetMethod(request.GET).
-			SetURL("https://jsonplaceholder.typicode.com/posts").
-			Build()
+		go func() {
+			log.Println("submitting request...")
 
-		log.Printf("successfully submitted request. \n")
-		UpdateResponseView(g, res.Body)
+			res := request.RequestBuilder().
+				SetMethod(request.GET).
+				SetURL("https://jsonplaceholder.typicode.com/posts").
+				Build()
+
+			log.Println("success!")
+			responseChan <- fmt.Sprintf("status: %d\n \n %s", res.StatusCode, res.Body)
+		}()
+
 		return nil
 	}
 }
 
 func UpdateResponseView(g *gocui.Gui, content string) error {
-	v, err := g.View(views.RESPONSE)
-	if err != nil {
-		return err
-	}
+	g.Update(func(g *gocui.Gui) error {
+		v, err := g.View(views.RESPONSE)
+		if err != nil {
+			return err
+		}
 
-	v.Clear()
+		v.Clear()
 
-	fmt.Fprint(v, content)
+		fmt.Fprint(v, content)
 
+		return nil
+	})
 	return nil
 }
