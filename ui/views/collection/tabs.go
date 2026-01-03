@@ -6,7 +6,7 @@ import (
 	"github.com/awesome-gocui/gocui"
 )
 
-var TabNames = []string{views.BODY, views.HEADERS}
+var TabNames = []string{views.BODY, "header_key_0"}
 var ActiveTabIdx = 0
 
 func nextTab(g *gocui.Gui, v *gocui.View) error {

@@ -26,7 +26,9 @@ func layout(g *gocui.Gui) error {
 		log.Println("digitando ->", typedValue)
 	}
 
-	if err := collection.Headers(g, maxX, maxY); err != nil {
+	headers, err := collection.Headers(g, maxX, maxY)
+	if err != nil {
+		log.Println(headers)
 		return err
 	}
 
