@@ -1,6 +1,8 @@
 package views
 
 import (
+	"lazycurl/ui/views/helper"
+
 	"github.com/awesome-gocui/gocui"
 )
 
@@ -13,46 +15,25 @@ func Logs(g *gocui.Gui, maxX, maxY int) error {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
+		g.Cursor = false
+
 		v.Title = "Logs"
 		v.Wrap = true
 		v.Frame = false
 
+		v.Highlight = true
+		v.SelFgColor = gocui.ColorBlack
+		v.SelBgColor = gocui.ColorGreen
+
 		g.SetViewOnBottom(LOGS)
 
-		if err := g.SetKeybinding("", gocui.KeyF10, gocui.ModNone, toggleLogs); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-var isLogsVisible = false
-
-func toggleLogs(g *gocui.Gui, v *gocui.View) error {
-	isLogsVisible = !isLogsVisible
-
-	if isLogsVisible {
-		views := g.Views()
-		for _, view := range views {
-			view.FrameColor = gocui.ColorWhite
-			view.TitleColor = gocui.ColorWhite
-		}
-
-		g.SetViewOnTop(LOGS)
-		v, err := g.SetCurrentView(LOGS)
-		if err != nil {
+		if err := g.SetKeybinding(LOGS, gocui.KeyF10, gocui.ModNone, helper.ToggleLogs(LOGS)); err != nil {
 			return err
 		}
 
-		v.Frame = true
-		v.FrameColor = gocui.ColorGreen
-		v.TitleColor = gocui.ColorGreen
-
-		return nil
+		if err := g.SetKeybinding(LOGS, gocui.KeyEsc, gocui.ModNone, helper.ToggleLogs(LOGS)); err != nil {
+			return err
+		}
 	}
-
-	g.SetViewOnBottom(LOGS)
-	v.Frame = false
-
 	return nil
 }

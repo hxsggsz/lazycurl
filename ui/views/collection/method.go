@@ -68,13 +68,15 @@ func openMethodModal(g *gocui.Gui, v *gocui.View) error {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
+		g.Cursor = false
 
 		v.Title = "Select Method"
 		v.FrameColor = gocui.ColorGreen
 		v.TitleColor = gocui.ColorGreen
+
+		v.Highlight = true
 		v.SelFgColor = gocui.ColorBlack
 		v.SelBgColor = gocui.ColorGreen
-		v.Highlight = true
 
 		for _, method := range methods {
 			fmt.Fprintln(v, method)
