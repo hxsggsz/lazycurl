@@ -20,3 +20,10 @@ const (
 	LAYOUT_SECTION_Y_GAP = 1
 	RIGHT_BORDER         = 1 // only right views need this border margin
 )
+
+const (
+	RESET  = "\033[0m"
+	RED    = "\033[31m"
+	YELLOW = "\033[33m"
+	GREEN  = "\033[32m"
+)

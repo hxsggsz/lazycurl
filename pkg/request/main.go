@@ -17,6 +17,8 @@ const (
 	OPTIONS = "OPTIONS"
 )
 
+type setHeader = func(key, value string)
+
 type RequestOptions struct {
 	Method  string
 	Url     string
@@ -44,13 +46,7 @@ func (ro *RequestOptions) Send() Response {
 		return Response{StatusCode: 500, Body: "Request Error: " + err.Error()}
 	}
 
-	for k, v := range ro.Headers {
-		if k != "" || v != "" {
-			req.Header.Set(k, v)
-		}
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", "LazyCurl/1.0 (Terminal API Client)")
+	setReqHeaders(ro.Headers, req.Header.Set)
 
 	client := &http.Client{Timeout: 10 * time.Second}
 	res, err := client.Do(req)
@@ -65,6 +61,16 @@ func (ro *RequestOptions) Send() Response {
 	simpleHeaders := simplifyHeaders(res.Header)
 
 	return Response{res.StatusCode, simpleHeaders, string(body)}
+}
+
+func setReqHeaders(headers map[string]string, setHeader setHeader) {
+	for k, v := range headers {
+		if k != "" || v != "" {
+			setHeader(k, v)
+		}
+	}
+	setHeader("Content-Type", "application/json")
+	setHeader("User-Agent", "LazyCurl/1.0 (Terminal API Client)")
 }
 
 func simplifyHeaders(headers http.Header) map[string]string {

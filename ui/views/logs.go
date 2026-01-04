@@ -27,11 +27,11 @@ func Logs(g *gocui.Gui, maxX, maxY int) error {
 
 		g.SetViewOnBottom(LOGS)
 
-		if err := g.SetKeybinding(LOGS, gocui.KeyF10, gocui.ModNone, helper.ToggleLogs(LOGS)); err != nil {
+		if err := g.SetKeybinding("", gocui.KeyF10, gocui.ModNone, helper.ToggleView(LOGS)); err != nil {
 			return err
 		}
 
-		if err := g.SetKeybinding(LOGS, gocui.KeyEsc, gocui.ModNone, helper.ToggleLogs(LOGS)); err != nil {
+		if err := g.SetKeybinding(LOGS, gocui.KeyEsc, gocui.ModNone, helper.CloseView(LOGS)); err != nil {
 			return err
 		}
 	}

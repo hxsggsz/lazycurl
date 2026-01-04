@@ -4,6 +4,7 @@ import (
 	"lazycurl/ui/keyboard"
 	"lazycurl/ui/views"
 	"lazycurl/ui/views/collection"
+	"lazycurl/ui/views/helper"
 
 	"github.com/awesome-gocui/gocui"
 )
@@ -35,9 +36,14 @@ func layout(g *gocui.Gui) error {
 		return err
 	}
 
+	if err := collection.Help(g, maxX, maxY); err != nil {
+		return err
+	}
+
 	keyboard.RegisterGlobalNumericNavigation(g)
 	keyboard.RegisterGlobalSubmit(g)
 	keyboard.RegisterGlobalViewNavigation(g)
+	helper.ChangeViewFrame(g)
 
 	return nil
 }

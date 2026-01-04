@@ -12,11 +12,6 @@ import (
 )
 
 var (
-	Reset  = "\033[0m"
-	Red    = "\033[31m" // 5xx
-	Yellow = "\033[33m" // 4xx
-	Green  = "\033[32m" // 2xx
-
 	responseChan = make(chan string, 1)
 	headerChan   = make(chan map[string]string, 1)
 )
@@ -127,15 +122,15 @@ func coloredStatus(statusCode int) string {
 	var color string
 	switch {
 	case firstDigit == 2:
-		color = Green
+		color = views.GREEN
 	case firstDigit == 4:
-		color = Yellow
+		color = views.YELLOW
 	case firstDigit == 5:
-		color = Red
+		color = views.RED
 	default:
 		color = ""
 	}
 
 	idx := strings.Index(statusStr, numStr)
-	return color + numStr + Reset + statusStr[idx+len(numStr):]
+	return color + numStr + views.RESET + statusStr[idx+len(numStr):]
 }
