@@ -8,7 +8,7 @@ import (
 
 func Body(g *gocui.Gui, maxX, maxY int) error {
 	viewName := views.BODY
-	height := maxY - views.LOGS_HEIGHT
+	height := maxY - views.BOTTOM_MESSAGE
 
 	x0 := views.FULL
 	x1 := maxX / 2

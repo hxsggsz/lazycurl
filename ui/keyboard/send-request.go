@@ -32,6 +32,7 @@ func RegisterGlobalSubmit(g *gocui.Gui) error {
 
 	go func() {
 		for content := range responseChan {
+			log.Println("body", content)
 			g.Update(func(g *gocui.Gui) error {
 				return UpdateResponseView(g, content)
 			})
@@ -47,6 +48,7 @@ func RegisterGlobalSubmit(g *gocui.Gui) error {
 
 			finalContent := allHeaders.String()
 			totalHeaders := len(headers)
+			log.Println("headers", finalContent)
 
 			g.Update(func(g *gocui.Gui) error {
 				return UpdateHeadersView(g, finalContent, totalHeaders)

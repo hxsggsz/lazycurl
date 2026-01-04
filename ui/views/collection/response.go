@@ -9,7 +9,7 @@ import (
 
 func Response(g *gocui.Gui, maxX, maxY int) error {
 	viewName := views.RESPONSE
-	height := maxY - views.LOGS_HEIGHT
+	height := maxY - views.BOTTOM_MESSAGE
 
 	width := maxX / 2
 	x0 := width + views.LAYOUT_SECTION_X_GAP
@@ -46,7 +46,7 @@ func Response(g *gocui.Gui, maxX, maxY int) error {
 
 func responseHeaders(g *gocui.Gui, maxX, maxY int) error {
 	viewName := views.RESPONSE_HEADERS
-	height := maxY - views.LOGS_HEIGHT
+	height := maxY - views.BOTTOM_MESSAGE
 
 	width := maxX / 2
 	x0 := width + views.LAYOUT_SECTION_X_GAP

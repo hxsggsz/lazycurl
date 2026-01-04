@@ -16,6 +16,10 @@ func RegisterGlobalViewNavigation(g *gocui.Gui) error {
 		if err := g.SetKeybinding(views.RESPONSE, key, gocui.ModNone, handler); err != nil {
 			return err
 		}
+
+		if err := g.SetKeybinding(views.LOGS, key, gocui.ModNone, handler); err != nil {
+			return err
+		}
 	}
 	return nil
 }

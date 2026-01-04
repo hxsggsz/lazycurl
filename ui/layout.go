@@ -31,7 +31,7 @@ func layout(g *gocui.Gui) error {
 		return err
 	}
 
-	if err := views.Output(g, maxX, maxY); err != nil {
+	if err := views.Logs(g, maxX, maxY); err != nil {
 		return err
 	}
 

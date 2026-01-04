@@ -14,7 +14,7 @@ const (
 const (
 	FULL                 = 0
 	LOGS_BOTTOM          = 1
-	LOGS_HEIGHT          = 3
+	BOTTOM_MESSAGE       = 1
 	LAYOUT_INPUT_HEIGHT  = 2
 	LAYOUT_SECTION_X_GAP = 2
 	LAYOUT_SECTION_Y_GAP = 1

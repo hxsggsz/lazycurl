@@ -19,7 +19,7 @@ var (
 func Headers(g *gocui.Gui, maxX, maxY int) error {
 	viewName := views.HEADERS
 	x0, y0 := views.FULL, views.LAYOUT_INPUT_HEIGHT+views.LAYOUT_SECTION_Y_GAP
-	x1, y1 := maxX/2, maxY-views.LOGS_HEIGHT-views.LOGS_BOTTOM
+	x1, y1 := maxX/2, maxY-views.BOTTOM_MESSAGE-views.LOGS_BOTTOM
 
 	if v, err := g.SetView(viewName, x0, y0, x1, y1, 0); err != nil {
 		if err != gocui.ErrUnknownView {
