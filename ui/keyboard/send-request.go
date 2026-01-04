@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"lazycurl/pkg/request"
 	"lazycurl/ui/views"
+	"lazycurl/ui/views/collection"
 	"log"
 	"strings"
 
@@ -23,7 +24,7 @@ func RegisterGlobalSubmit(g *gocui.Gui) error {
 	viewsToSubmitRequest := []string{views.URL, views.RESPONSE, views.METHOD}
 
 	for _, name := range viewsToSubmitRequest {
-		if err := g.SetKeybinding(name, gocui.KeyEnter, gocui.ModNone, submitHandler()); err != nil {
+		if err := g.SetKeybinding(name, gocui.KeyEnter, gocui.ModNone, submitHandler); err != nil {
 			return err
 		}
 	}
@@ -39,24 +40,24 @@ func RegisterGlobalSubmit(g *gocui.Gui) error {
 	return nil
 }
 
-func submitHandler() func(*gocui.Gui, *gocui.View) error {
-	return func(g *gocui.Gui, v *gocui.View) error {
+func submitHandler(g *gocui.Gui, v *gocui.View) error {
+	go func() {
 		responseChan <- "loading..."
 
-		go func() {
-			log.Println("submitting request...")
+		log.Println("submitting request...")
 
-			res := request.RequestBuilder().
-				SetMethod(request.GET).
-				SetURL("https://jsonplaceholder.typicode.com/post").
-				Build()
+		res := request.RequestBuilder(
+			collection.GetCurrentMethod(g),
+			collection.GetInputValue(g),
+			collection.GetBodyValue(g),
+			collection.GetHeaders(g),
+		).Send()
 
-			statusMsg := coloredStatus(res.StatusCode)
-			responseChan <- fmt.Sprintf("status: %s \n \n %s", statusMsg, res.Body)
-		}()
+		statusMsg := coloredStatus(res.StatusCode)
+		responseChan <- fmt.Sprintf("status: %s \n \n %s", statusMsg, res.Body)
+	}()
 
-		return nil
-	}
+	return nil
 }
 
 func UpdateResponseView(g *gocui.Gui, content string) error {

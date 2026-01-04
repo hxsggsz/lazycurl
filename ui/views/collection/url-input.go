@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"lazycurl/ui/utils"
 	"lazycurl/ui/views"
-	"log"
 
 	"github.com/awesome-gocui/gocui"
 )
@@ -16,9 +15,9 @@ func inputViewConfig(g *gocui.Gui, v *gocui.View) {
 
 }
 
-func Input(g *gocui.Gui, maxX int) (string, error) {
+func Input(g *gocui.Gui, maxX int) error {
 	viewName := views.URL
-	x0 := 10 // views.FULL
+	x0 := 10
 	y0 := views.FULL
 
 	x1 := maxX - views.LAYOUT_SECTION_Y_GAP
@@ -26,7 +25,7 @@ func Input(g *gocui.Gui, maxX int) (string, error) {
 
 	if v, err := g.SetView(viewName, x0, y0, x1, y1, 0); err != nil {
 		if err != gocui.ErrUnknownView {
-			return "", err
+			return err
 		}
 
 		// default focus when iniciate the view
@@ -40,10 +39,13 @@ func Input(g *gocui.Gui, maxX int) (string, error) {
 		}
 	}
 
-	inputView, err := g.View(viewName)
-	if err != nil {
-		log.Panicf("not found view -> %v", viewName)
-	}
+	return nil
+}
 
-	return inputView.Buffer(), nil
+func GetInputValue(g *gocui.Gui) string {
+	v, err := g.View(views.URL)
+	if err != nil {
+		return ""
+	}
+	return v.Buffer()
 }

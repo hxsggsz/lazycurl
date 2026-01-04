@@ -4,7 +4,6 @@ import (
 	"lazycurl/ui/keyboard"
 	"lazycurl/ui/views"
 	"lazycurl/ui/views/collection"
-	"log"
 
 	"github.com/awesome-gocui/gocui"
 )
@@ -16,19 +15,11 @@ func layout(g *gocui.Gui) error {
 		return err
 	}
 
-	typedValue, err := collection.Input(g, maxX)
-	if err != nil {
+	if err := collection.Input(g, maxX); err != nil {
 		return err
 	}
 
-	if typedValue != "" {
-		// essa funćão é chamada toda hora então usar os logs apenas em ações do usuário para o notifica-lo uma vez
-		log.Println("digitando ->", typedValue)
-	}
-
-	headers, err := collection.Headers(g, maxX, maxY)
-	if err != nil {
-		log.Println(headers)
+	if err := collection.Headers(g, maxX, maxY); err != nil {
 		return err
 	}
 

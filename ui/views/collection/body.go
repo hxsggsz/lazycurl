@@ -39,3 +39,12 @@ func Body(g *gocui.Gui, maxX, maxY int) error {
 
 	return nil
 }
+
+func GetBodyValue(g *gocui.Gui) string {
+	v, err := g.View(views.BODY)
+	if err != nil {
+		return ""
+	}
+
+	return v.Buffer()
+}

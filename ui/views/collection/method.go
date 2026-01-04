@@ -6,6 +6,7 @@ import (
 	"lazycurl/ui/utils"
 	"lazycurl/ui/views"
 	"log"
+	"strings"
 
 	"github.com/awesome-gocui/gocui"
 )
@@ -40,7 +41,16 @@ func Method(g *gocui.Gui, maxX, maxY int) error {
 
 		g.SetViewOnBottom(viewName)
 	}
+
 	return nil
+}
+
+func GetCurrentMethod(g *gocui.Gui) string {
+	v, err := g.View(views.METHOD)
+	if err != nil {
+		return "GET"
+	}
+	return strings.TrimSpace(v.Buffer())
 }
 
 func openMethodModal(g *gocui.Gui, v *gocui.View) error {

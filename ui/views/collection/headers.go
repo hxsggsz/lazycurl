@@ -16,27 +16,25 @@ var (
 	totalHeaders    = 1
 )
 
-func Headers(g *gocui.Gui, maxX, maxY int) (Header, error) {
+func Headers(g *gocui.Gui, maxX, maxY int) error {
 	viewName := views.HEADERS
 	x0, y0 := views.FULL, views.LAYOUT_INPUT_HEIGHT+views.LAYOUT_SECTION_Y_GAP
 	x1, y1 := maxX/2, maxY-views.LOGS_HEIGHT-views.LOGS_BOTTOM
 
-	headers := make(Header, 0)
-
 	if v, err := g.SetView(viewName, x0, y0, x1, y1, 0); err != nil {
 		if err != gocui.ErrUnknownView {
-			return nil, err
+			return err
 		}
 		v.Title = "[3] Body *Headers"
 	}
 
 	for i := 0; i < totalHeaders; i++ {
 		if err := renderHeaderPair(g, i, maxX); err != nil {
-			return nil, err
+			return err
 		}
-		getHeaders(g, i, headers)
 	}
-	return headers, nil
+
+	return nil
 }
 
 func renderHeaderPair(g *gocui.Gui, index int, maxX int) error {
@@ -75,17 +73,23 @@ func renderHeaderPair(g *gocui.Gui, index int, maxX int) error {
 	return nil
 }
 
-func getHeaders(g *gocui.Gui, index int, headers Header) {
-	keyView := fmt.Sprintf("header_key_%d", index)
-	valView := fmt.Sprintf("header_val_%d", index)
+func GetHeaders(g *gocui.Gui) Header {
+	headers := make(Header, 0)
 
-	if k, err := g.View(keyView); err == nil {
-		headers[k.Buffer()] = ""
-	}
-	if v, err := g.View(valView); err == nil {
-		headers[v.Buffer()] = v.Buffer()
+	for index := 0; index < totalHeaders; index++ {
+		keyView := fmt.Sprintf("header_key_%d", index)
+		valView := fmt.Sprintf("header_val_%d", index)
+
+		if k, err := g.View(keyView); err == nil {
+			headers[k.Buffer()] = ""
+		}
+
+		if v, err := g.View(valView); err == nil {
+			headers[v.Buffer()] = v.Buffer()
+		}
 	}
 
+	return headers
 }
 
 func createNewHeader(g *gocui.Gui, v *gocui.View) error {

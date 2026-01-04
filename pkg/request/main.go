@@ -1,8 +1,8 @@
 package request
 
 import (
+	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"time"
 )
@@ -18,55 +18,39 @@ const (
 )
 
 type RequestOptions struct {
-	method  string
-	url     string
-	headers map[string]string
-	body    string
+	Method  string
+	Url     string
+	Headers map[string]string
+	Body    string
 }
 
 type Response struct {
 	StatusCode int
-	Headers    map[string][]string
+	Headers    map[string]string
 	Body       string
 }
 
-func RequestBuilder() *RequestOptions {
-	return &RequestOptions{}
+func RequestBuilder(method, url, body string, headers map[string]string) *RequestOptions {
+	return &RequestOptions{Url: url, Method: method, Body: body, Headers: headers}
 }
 
-func (ro *RequestOptions) SetMethod(method string) *RequestOptions {
-	ro.method = method
-	return ro
-}
+func (ro *RequestOptions) Send() Response {
+	req, err := http.NewRequest(ro.Method, ro.Url, nil)
+	if err != nil {
+		return Response{StatusCode: 500, Body: "Request Error: " + err.Error()}
+	}
 
-func (ro *RequestOptions) SetURL(url string) *RequestOptions {
-	ro.url = url
-	return ro
-}
-
-func (ro *RequestOptions) Build() Response {
-	req, _ := http.NewRequest(
-		ro.method,
-		ro.url,
-		nil,
-	)
-
-	// TODO: set headers in view here
 	req.Header.Set("Content-Type", "application/json")
+	// log.Println("url: ", ro.Url, "req url: ", req.URL)
 
 	client := &http.Client{Timeout: 10 * time.Second}
-
 	res, err := client.Do(req)
-
 	if err != nil {
-		log.Println("Erro:", err)
-		return Response{res.StatusCode, res.Header, err.Error()}
+		return Response{StatusCode: 500, Body: fmt.Sprintf("Network Error: %s", err.Error())}
 	}
+
 	defer res.Body.Close()
 
 	body, _ := io.ReadAll(res.Body)
-	// how to get the headers in the response
-	// res.Header
-
-	return Response{res.StatusCode, res.Header, string(body)}
+	return Response{res.StatusCode, ro.Headers, string(body)}
 }
