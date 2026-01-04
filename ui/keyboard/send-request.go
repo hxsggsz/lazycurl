@@ -18,10 +18,11 @@ var (
 	Green  = "\033[32m" // 2xx
 
 	responseChan = make(chan string, 1)
+	headerChan   = make(chan map[string]string, 1)
 )
 
 func RegisterGlobalSubmit(g *gocui.Gui) error {
-	viewsToSubmitRequest := []string{views.URL, views.RESPONSE, views.METHOD}
+	viewsToSubmitRequest := []string{views.URL, views.RESPONSE, views.RESPONSE_HEADERS, views.METHOD}
 
 	for _, name := range viewsToSubmitRequest {
 		if err := g.SetKeybinding(name, gocui.KeyEnter, gocui.ModNone, submitHandler); err != nil {
@@ -37,13 +38,29 @@ func RegisterGlobalSubmit(g *gocui.Gui) error {
 		}
 	}()
 
+	go func() {
+		for headers := range headerChan {
+			var allHeaders strings.Builder
+			for key, value := range headers {
+				allHeaders.WriteString(fmt.Sprintf(" %s: %s\n", key, value))
+			}
+
+			finalContent := allHeaders.String()
+			totalHeaders := len(headers)
+
+			g.Update(func(g *gocui.Gui) error {
+				return UpdateHeadersView(g, finalContent, totalHeaders)
+			})
+		}
+	}()
+
 	return nil
 }
 
 func submitHandler(g *gocui.Gui, v *gocui.View) error {
-	go func() {
-		responseChan <- "loading..."
+	responseChan <- "loading..."
 
+	go func() {
 		log.Println("submitting request...")
 
 		res := request.RequestBuilder(
@@ -55,11 +72,34 @@ func submitHandler(g *gocui.Gui, v *gocui.View) error {
 
 		statusMsg := coloredStatus(res.StatusCode)
 		responseChan <- fmt.Sprintf("status: %s \n \n %s", statusMsg, res.Body)
+		headerChan <- res.Headers
 	}()
 
 	return nil
 }
 
+func UpdateHeadersView(g *gocui.Gui, content string, totalHeaders int) error {
+	g.Update(func(g *gocui.Gui) error {
+		v, err := g.View(views.RESPONSE_HEADERS)
+		if err != nil {
+			return err
+		}
+
+		v.Clear()
+		v.Title = fmt.Sprintf("[4] Response *Headers (%d)", totalHeaders)
+
+		fmt.Fprint(v, content)
+
+		resView, err := g.View(views.RESPONSE)
+		if err != nil {
+			return err
+		}
+		resView.Title = fmt.Sprintf("[4] *Response Headers (%d)", totalHeaders)
+
+		return nil
+	})
+	return nil
+}
 func UpdateResponseView(g *gocui.Gui, content string) error {
 	g.Update(func(g *gocui.Gui) error {
 		v, err := g.View(views.RESPONSE)
@@ -91,10 +131,9 @@ func coloredStatus(statusCode int) string {
 	case firstDigit == 5:
 		color = Red
 	default:
-		color = "" // Sem cor para outros (1xx, 3xx)
+		color = ""
 	}
 
-	// Substitui o número pela versão colorida
 	idx := strings.Index(statusStr, numStr)
 	return color + numStr + Reset + statusStr[idx+len(numStr):]
 }

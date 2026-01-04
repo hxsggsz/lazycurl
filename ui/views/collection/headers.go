@@ -171,11 +171,11 @@ func deleteHeaderPair(g *gocui.Gui, v *gocui.View) error {
 func setKeybindings(g *gocui.Gui, viewName string) error {
 
 	headerKeyBindings := utils.KeybindsMaps{
-		gocui.KeyArrowLeft:  prevTab,
-		gocui.KeyArrowRight: nextTab,
-		gocui.KeyEnter:      createNewHeader,
-		gocui.KeyTab:        focusNextInput,
-		gocui.KeyDelete:     deleteHeaderPair,
+		gocui.KeyArrowLeft:  {Modifier: gocui.ModShift, Handler: prevTab(BodyTabs)},
+		gocui.KeyArrowRight: {Modifier: gocui.ModShift, Handler: nextTab(BodyTabs)},
+		gocui.KeyEnter:      {Modifier: gocui.ModNone, Handler: createNewHeader},
+		gocui.KeyTab:        {Modifier: gocui.ModNone, Handler: focusNextInput},
+		gocui.KeyDelete:     {Modifier: gocui.ModNone, Handler: deleteHeaderPair},
 	}
 
 	views.HandleBlurInput(g, viewName)

@@ -93,11 +93,11 @@ func openMethodModal(g *gocui.Gui, v *gocui.View) error {
 }
 
 func registerMethodViewNavigation(g *gocui.Gui) error {
-	methodModalKeymaps := map[gocui.Key]func(g *gocui.Gui, v *gocui.View) error{
-		gocui.KeyEsc:       closeMethodModal,
-		gocui.KeyEnter:     selectMethod,
-		gocui.KeyArrowDown: moveDownModal,
-		gocui.KeyArrowUp:   moveUpModal,
+	methodModalKeymaps := map[gocui.Key]utils.KeybindAction{
+		gocui.KeyEsc:       {Modifier: gocui.ModNone, Handler: closeMethodModal},
+		gocui.KeyEnter:     {Modifier: gocui.ModNone, Handler: selectMethod},
+		gocui.KeyArrowDown: {Modifier: gocui.ModNone, Handler: moveDownModal},
+		gocui.KeyArrowUp:   {Modifier: gocui.ModNone, Handler: moveUpModal},
 	}
 
 	if err := utils.SetKeybind(g, methodModalKeymaps, "methodModal"); err != nil {

@@ -29,10 +29,10 @@ func Body(g *gocui.Gui, maxX, maxY int) error {
 		g.Cursor = true
 		views.HandleBlurInput(g, viewName)
 
-		if err := g.SetKeybinding(viewName, gocui.KeyArrowLeft, gocui.ModShift, prevTab); err != nil {
+		if err := g.SetKeybinding(viewName, gocui.KeyArrowLeft, gocui.ModShift, prevTab(BodyTabs)); err != nil {
 			return err
 		}
-		if err := g.SetKeybinding(viewName, gocui.KeyArrowRight, gocui.ModShift, nextTab); err != nil {
+		if err := g.SetKeybinding(viewName, gocui.KeyArrowRight, gocui.ModShift, nextTab(BodyTabs)); err != nil {
 			return err
 		}
 	}

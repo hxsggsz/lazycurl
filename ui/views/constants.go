@@ -1,19 +1,14 @@
 package views
 
 const (
-	METHOD   = "method"
-	URL      = "url"
-	TABS     = "tabs"
-	BODY     = "body"
-	HEADERS  = "headers"
-	RESPONSE = "response"
-	LOGS     = "logs"
-)
-
-const (
-	TABS_BAR    = "tabs-bar"
-	TAB_BODY    = "tab-body"
-	TAB_HEADERS = "tab-headers"
+	METHOD           = "method"
+	URL              = "url"
+	TABS             = "tabs"
+	BODY             = "body"
+	HEADERS          = "headers"
+	RESPONSE         = "response"
+	RESPONSE_HEADERS = "response_headers"
+	LOGS             = "logs"
 )
 
 const (
