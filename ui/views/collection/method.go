@@ -64,7 +64,7 @@ func openMethodModal(g *gocui.Gui, v *gocui.View) error {
 	x1 := x0 + modalWidth
 	y1 := y0 + modalHeight
 
-	if v, err := g.SetView("methodModal", x0, y0, x1, y1, 0); err != nil {
+	if v, err := g.SetView("method_modal", x0, y0, x1, y1, 0); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -88,7 +88,7 @@ func openMethodModal(g *gocui.Gui, v *gocui.View) error {
 			return err
 		}
 
-		g.SetCurrentView("methodModal")
+		g.SetCurrentView("method_modal")
 
 	}
 	return nil
@@ -96,13 +96,11 @@ func openMethodModal(g *gocui.Gui, v *gocui.View) error {
 
 func registerMethodViewNavigation(g *gocui.Gui) error {
 	methodModalKeymaps := utils.KeybindsMaps{
-		{Key: gocui.KeyEsc, Modifier: gocui.ModNone}:       closeMethodModal,
-		{Key: gocui.KeyEnter, Modifier: gocui.ModNone}:     selectMethod,
-		{Key: gocui.KeyArrowDown, Modifier: gocui.ModNone}: moveDownModal,
-		{Key: gocui.KeyArrowUp, Modifier: gocui.ModNone}:   moveUpModal,
+		{Key: gocui.KeyEsc, Modifier: gocui.ModNone}:   closeMethodModal,
+		{Key: gocui.KeyEnter, Modifier: gocui.ModNone}: selectMethod,
 	}
 
-	if err := utils.SetKeybind(g, methodModalKeymaps, "methodModal"); err != nil {
+	if err := utils.SetKeybind(g, methodModalKeymaps, "method_modal"); err != nil {
 		return err
 	}
 
@@ -138,7 +136,7 @@ func selectMethod(g *gocui.Gui, v *gocui.View) error {
 }
 
 func closeMethodModal(g *gocui.Gui, v *gocui.View) error {
-	g.DeleteView("methodModal")
+	g.DeleteView("method_modal")
 	g.SetCurrentView(views.METHOD)
 	return nil
 }
