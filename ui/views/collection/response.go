@@ -32,12 +32,7 @@ func Response(g *gocui.Gui, maxX, maxY int) error {
 		g.Cursor = true
 	}
 
-	headerKeyBindings := utils.KeybindsMaps{
-		gocui.KeyArrowLeft:  {Modifier: gocui.ModShift, Handler: prevTab(ResponseTabs)},
-		gocui.KeyArrowRight: {Modifier: gocui.ModShift, Handler: nextTab(ResponseTabs)},
-	}
-
-	if err := utils.SetKeybind(g, headerKeyBindings, viewName); err != nil {
+	if err := setKeybinds(g, viewName); err != nil {
 		return err
 	}
 
@@ -63,9 +58,17 @@ func responseHeaders(g *gocui.Gui, maxX, maxY int) error {
 		v.Wrap = true
 	}
 
+	if err := setKeybinds(g, viewName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func setKeybinds(g *gocui.Gui, viewName string) error {
 	headerKeyBindings := utils.KeybindsMaps{
-		gocui.KeyArrowLeft:  {Modifier: gocui.ModShift, Handler: prevTab(ResponseTabs)},
-		gocui.KeyArrowRight: {Modifier: gocui.ModShift, Handler: nextTab(ResponseTabs)},
+		{Key: gocui.KeyArrowLeft, Modifier: gocui.ModShift}:  prevTab(ResponseTabs),
+		{Key: gocui.KeyArrowRight, Modifier: gocui.ModShift}: nextTab(ResponseTabs),
 	}
 
 	if err := utils.SetKeybind(g, headerKeyBindings, viewName); err != nil {

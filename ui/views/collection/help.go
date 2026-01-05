@@ -64,7 +64,16 @@ func ShowHelpModal(g *gocui.Gui, v *gocui.View) error {
 		v.SelBgColor = gocui.ColorGreen
 		v.Highlight = true
 
-		printCategory := func(name string) {
+		printCategory := func(name string, breakLine ...bool) {
+			shouldBreak := true
+			if len(breakLine) > 0 {
+				shouldBreak = breakLine[0]
+			}
+
+			if shouldBreak {
+				fmt.Fprintln(v)
+			}
+
 			fmt.Fprintf(v, "%s  -- %s --%s\n", ColorBlue, name, ColorReset)
 		}
 
@@ -72,16 +81,36 @@ func ShowHelpModal(g *gocui.Gui, v *gocui.View) error {
 			fmt.Fprintf(v, "  %s%-10s%s %s\n", ColorGreen, key, ColorReset, desc)
 		}
 
-		// --- Conteúdo Baseado no Vídeo ---
-		printCategory("Global")
-		printKeybind("<enter>", "Submit Request")
-		printKeybind("<tab>", "Next Field")
-		printKeybind("<f10>", "Toggle Logs")
-		printKeybind("q", "Quit Help")
+		printCategory("Global", false)
+		printKeybind("<Enter>", "Submit Request")
+		printKeybind("<F10>", "Toggle Logs")
+		printKeybind("<1>", "Focus in select method view")
+		printKeybind("<2>", "Focus in URL view")
+		printKeybind("<3>", "Focus in body/headers view")
+		printKeybind("<4>", "Focus in response/headers view")
+		printKeybind("<Esc>", "Unfocus view")
+		printKeybind("<C-c>", "Quit")
+
+		printCategory("Modals")
+		printKeybind("<Esc>", "Close modal")
+		printKeybind("<q>", "Close modal")
 
 		printCategory("Navigation")
 		printKeybind("<up>", "Scroll up")
 		printKeybind("<down>", "Scroll down")
+		printKeybind("<k>", "Scroll up")
+		printKeybind("<j>", "Scroll down")
+		printKeybind("<S-ArrowRight>", "Go to next tab")
+		printKeybind("<S-ArrowLeft>", "Go to previous tab")
+
+		printCategory("Request headers")
+		printKeybind("<Enter>", "Create new header")
+		printKeybind("<Delete>", "Delete header in focus")
+		printKeybind("<Tab>", "Focus in next input")
+		printKeybind("<S-Tab>", "Focus in previous input")
+		printKeybind("<S-ArrowRight>", "Go to next tab")
+		printKeybind("<S-ArrowLeft>", "Go to previous tab")
+
 		g.SetCurrentView("help_modal")
 	}
 	return nil

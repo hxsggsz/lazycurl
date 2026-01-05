@@ -28,8 +28,6 @@ func Input(g *gocui.Gui, maxX int) error {
 			return err
 		}
 
-		// default focus when iniciate the view
-		g.SetCurrentView(viewName)
 		inputViewConfig(g, v)
 		views.HandleBlurInput(g, viewName)
 

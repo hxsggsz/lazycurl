@@ -116,25 +116,87 @@ func createNewHeader(g *gocui.Gui, v *gocui.View) error {
 }
 
 func focusNextInput(g *gocui.Gui, v *gocui.View) error {
-	activeHeaderIdx = totalHeaders - 1
+	if v == nil {
+		return nil
+	}
 
-	g.Update(func(g *gocui.Gui) error {
-		viewName := v.Name()
-		v.FrameColor = gocui.ColorWhite
-		v.TitleColor = gocui.ColorWhite
+	viewName := v.Name()
 
-		if strings.HasPrefix(viewName, "header_key_") {
-			v, _ := g.SetCurrentView(fmt.Sprintf("header_val_%d", activeHeaderIdx))
-			v.FrameColor = gocui.ColorGreen
-			v.TitleColor = gocui.ColorGreen
-		} else {
-			v, _ := g.SetCurrentView(fmt.Sprintf("header_key_%d", activeHeaderIdx))
-			v.FrameColor = gocui.ColorGreen
-			v.TitleColor = gocui.ColorGreen
+	v.FrameColor = gocui.ColorWhite
+	v.TitleColor = gocui.ColorWhite
+
+	var nextViewName string
+
+	if after, ok := strings.CutPrefix(viewName, "header_key_"); ok {
+		idxStr := after
+		nextViewName = "header_val_" + idxStr
+	}
+	if strings.HasPrefix(viewName, "header_val_") {
+		var currentIdx int
+		fmt.Sscanf(viewName, "header_val_%d", &currentIdx)
+		nextIdx := currentIdx + 1
+
+		nextKeyName := fmt.Sprintf("header_key_%d", nextIdx)
+
+		if _, err := g.View(nextKeyName); err != nil {
+			createNewHeader(g, v)
 		}
 
+		nextViewName = nextKeyName
+	}
+
+	g.Update(func(g *gocui.Gui) error {
+		nextV, err := g.SetCurrentView(nextViewName)
+		if err != nil {
+			return err
+		}
+		nextV.FrameColor = gocui.ColorGreen
+		nextV.TitleColor = gocui.ColorGreen
 		return nil
 	})
+
+	return nil
+}
+
+func focusPreviousInput(g *gocui.Gui, v *gocui.View) error {
+	if v == nil {
+		return nil
+	}
+
+	viewName := v.Name()
+	var nextViewName string
+
+	if after, ok := strings.CutPrefix(viewName, "header_val_"); ok {
+		idxStr := after
+		nextViewName = "header_key_" + idxStr
+	}
+
+	if strings.HasPrefix(viewName, "header_key_") {
+		var currentIdx int
+		fmt.Sscanf(viewName, "header_key_%d", &currentIdx)
+
+		if currentIdx <= 0 {
+			return nil
+		}
+
+		nextViewName = fmt.Sprintf("header_val_%d", currentIdx-1)
+	}
+
+	if nextViewName != "" {
+		g.Update(func(g *gocui.Gui) error {
+			v.FrameColor = gocui.ColorWhite
+			v.TitleColor = gocui.ColorWhite
+
+			nextV, err := g.SetCurrentView(nextViewName)
+			if err != nil {
+				return err
+			}
+
+			nextV.FrameColor = gocui.ColorGreen
+			nextV.TitleColor = gocui.ColorGreen
+			return nil
+		})
+	}
 
 	return nil
 }
@@ -171,11 +233,12 @@ func deleteHeaderPair(g *gocui.Gui, v *gocui.View) error {
 func setKeybindings(g *gocui.Gui, viewName string) error {
 
 	headerKeyBindings := utils.KeybindsMaps{
-		gocui.KeyArrowLeft:  {Modifier: gocui.ModShift, Handler: prevTab(BodyTabs)},
-		gocui.KeyArrowRight: {Modifier: gocui.ModShift, Handler: nextTab(BodyTabs)},
-		gocui.KeyEnter:      {Modifier: gocui.ModNone, Handler: createNewHeader},
-		gocui.KeyTab:        {Modifier: gocui.ModNone, Handler: focusNextInput},
-		gocui.KeyDelete:     {Modifier: gocui.ModNone, Handler: deleteHeaderPair},
+		{Key: gocui.KeyArrowLeft, Modifier: gocui.ModShift}:  prevTab(BodyTabs),
+		{Key: gocui.KeyArrowRight, Modifier: gocui.ModShift}: nextTab(BodyTabs),
+		{Key: gocui.KeyEnter, Modifier: gocui.ModNone}:       createNewHeader,
+		{Key: gocui.KeyTab, Modifier: gocui.ModNone}:         focusNextInput,
+		{Key: gocui.KeyBacktab, Modifier: gocui.ModNone}:     focusPreviousInput,
+		{Key: gocui.KeyDelete, Modifier: gocui.ModNone}:      deleteHeaderPair,
 	}
 
 	views.HandleBlurInput(g, viewName)

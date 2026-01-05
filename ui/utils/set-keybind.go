@@ -4,18 +4,16 @@ import (
 	"github.com/awesome-gocui/gocui"
 )
 
-// KeybindAction agrupa o modificador e a função de execução
-type KeybindAction struct {
+type KeyCombo struct {
+	Key      gocui.Key
 	Modifier gocui.Modifier
-	Handler  func(g *gocui.Gui, v *gocui.View) error
 }
 
-// KeybindsMaps agora mapeia a tecla para a nossa estrutura de ação
-type KeybindsMaps map[gocui.Key]KeybindAction
+type KeybindsMaps map[KeyCombo]func(g *gocui.Gui, v *gocui.View) error
 
 func SetKeybind(g *gocui.Gui, kbm KeybindsMaps, viewName string) error {
-	for key, action := range kbm {
-		if err := g.SetKeybinding(viewName, key, action.Modifier, action.Handler); err != nil {
+	for kc, handler := range kbm {
+		if err := g.SetKeybinding(viewName, kc.Key, kc.Modifier, handler); err != nil {
 			return err
 		}
 	}
