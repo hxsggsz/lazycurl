@@ -14,7 +14,7 @@ var viewNavigation = map[any]func(g *gocui.Gui, v *gocui.View) error{
 }
 
 func RegisterGlobalViewNavigation(g *gocui.Gui) error {
-	targetViews := []string{views.RESPONSE, views.LOGS, "method_modal", "help_modal"}
+	targetViews := []string{views.RESPONSE, views.RESPONSE_HEADERS, views.LOGS, "method_modal", "help_modal"}
 
 	for key, handler := range viewNavigation {
 		for _, viewName := range targetViews {

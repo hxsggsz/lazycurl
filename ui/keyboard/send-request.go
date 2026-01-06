@@ -2,10 +2,12 @@ package keyboard
 
 import (
 	"fmt"
+	"lazycurl/pkg/highlight"
 	"lazycurl/pkg/request"
 	"lazycurl/ui/views"
 	"lazycurl/ui/views/collection"
 	"log"
+	"regexp"
 	"strings"
 
 	"github.com/awesome-gocui/gocui"
@@ -27,7 +29,6 @@ func RegisterGlobalSubmit(g *gocui.Gui) error {
 
 	go func() {
 		for content := range responseChan {
-			log.Println("body", content)
 			g.Update(func(g *gocui.Gui) error {
 				return UpdateResponseView(g, content)
 			})
@@ -43,7 +44,6 @@ func RegisterGlobalSubmit(g *gocui.Gui) error {
 
 			finalContent := allHeaders.String()
 			totalHeaders := len(headers)
-			log.Println("headers", finalContent)
 
 			g.Update(func(g *gocui.Gui) error {
 				return UpdateHeadersView(g, finalContent, totalHeaders)
@@ -68,7 +68,7 @@ func submitHandler(g *gocui.Gui, v *gocui.View) error {
 		).Send()
 
 		statusMsg := coloredStatus(res.StatusCode)
-		responseChan <- fmt.Sprintf("status: %s \n \n %s", statusMsg, res.Body)
+		responseChan <- fmt.Sprintf("status: %s \n\n\n %s", statusMsg, res.Body)
 		headerChan <- res.Headers
 	}()
 
@@ -106,7 +106,20 @@ func UpdateResponseView(g *gocui.Gui, content string) error {
 
 		v.Clear()
 
-		fmt.Fprint(v, content)
+		parts := strings.SplitN(content, "\n", 2)
+		log.Println("parts", parts)
+
+		if len(parts) >= 2 {
+			highlighetdContent := highlight.Json(parts[1])
+			fmt.Fprint(v, parts[0])
+			fmt.Fprint(v, highlighetdContent)
+
+			return nil
+		}
+
+		highlighetdContent := highlight.Json(content)
+
+		fmt.Fprint(v, highlighetdContent)
 
 		return nil
 	})
@@ -117,20 +130,24 @@ func coloredStatus(statusCode int) string {
 	statusStr := fmt.Sprintf("status: %d", statusCode)
 	numStr := fmt.Sprintf("%d", statusCode)
 
-	firstDigit := statusCode / 100 // 2, 4 ou 5
+	re := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
+	cleanStatus := re.ReplaceAllString(statusStr, "")
+	cleanNum := re.ReplaceAllString(numStr, "")
+
+	firstDigit := statusCode / 100
 
 	var color string
-	switch {
-	case firstDigit == 2:
+	switch firstDigit {
+	case 2:
 		color = views.GREEN
-	case firstDigit == 4:
+	case 4:
 		color = views.YELLOW
-	case firstDigit == 5:
+	case 5:
 		color = views.RED
 	default:
 		color = ""
 	}
 
 	idx := strings.Index(statusStr, numStr)
-	return color + numStr + views.RESET + statusStr[idx+len(numStr):]
+	return color + cleanNum + views.RESET + cleanStatus[idx+len(cleanNum):]
 }

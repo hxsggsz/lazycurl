@@ -2,6 +2,7 @@ package collection
 
 import (
 	"lazycurl/ui/views"
+	"regexp"
 
 	"github.com/awesome-gocui/gocui"
 )
@@ -46,5 +47,8 @@ func GetBodyValue(g *gocui.Gui) string {
 		return ""
 	}
 
-	return v.Buffer()
+	re := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
+	cleanJSON := re.ReplaceAllString(v.Buffer(), "")
+
+	return cleanJSON
 }

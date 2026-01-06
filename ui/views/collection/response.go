@@ -29,7 +29,16 @@ func Response(g *gocui.Gui, maxX, maxY int) error {
 		v.Autoscroll = false
 		v.Wrap = true
 		v.HasLoader = true
-		g.Cursor = true
+
+		v.SelFgColor = gocui.ColorBlack
+		v.SelBgColor = gocui.ColorGreen
+	}
+
+	thisView, _ := g.View(viewName)
+	if g.CurrentView() == thisView {
+		thisView.Highlight = true
+	} else {
+		thisView.Highlight = false
 	}
 
 	if err := setKeybinds(g, viewName); err != nil {
@@ -56,6 +65,9 @@ func responseHeaders(g *gocui.Gui, maxX, maxY int) error {
 		}
 		v.Title = "[4] Response *Headers"
 		v.Wrap = true
+		v.SelFgColor = gocui.ColorBlack
+		v.SelBgColor = gocui.ColorGreen
+		v.Highlight = true
 	}
 
 	if err := setKeybinds(g, viewName); err != nil {
