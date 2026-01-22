@@ -7,6 +7,8 @@ import (
 	"github.com/awesome-gocui/gocui"
 )
 
+const bodyIndent = "  "
+
 func Body(g *gocui.Gui, maxX, maxY int) error {
 	viewName := views.BODY
 	height := maxY - views.BOTTOM_MESSAGE
@@ -26,6 +28,7 @@ func Body(g *gocui.Gui, maxX, maxY int) error {
 		v.Editable = true
 		v.Wrap = true
 		v.Autoscroll = false
+		v.Editor = gocui.EditorFunc(bodyEditor)
 
 		views.HandleBlurInput(g, viewName)
 
@@ -38,6 +41,80 @@ func Body(g *gocui.Gui, maxX, maxY int) error {
 	}
 
 	return nil
+}
+
+func bodyEditor(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) {
+	switch {
+	case key == gocui.KeyHome:
+		v.EditGotoToStartOfLine()
+		return
+	case key == gocui.KeyEnd:
+		v.EditGotoToEndOfLine()
+		return
+	case key == gocui.KeyTab:
+		tabLine(v)
+		return
+	case ch == '{':
+		createBrackets(v)
+		return
+	case ch == '[':
+		duplicateRune(v, '[')
+		return
+
+	case ch == '"':
+		duplicateRune(v, '"')
+		return
+	}
+
+	gocui.DefaultEditor.Edit(v, key, ch, mod)
+}
+
+func tabLine(v *gocui.View) {
+	for _, r := range bodyIndent {
+		v.EditWrite(r)
+	}
+}
+
+func createBrackets(v *gocui.View) {
+	v.EditWrite('{')
+	v.EditNewLine()
+	v.EditNewLine()
+	v.EditWrite('}')
+	v.MoveCursor(0, -1)
+	tabLine(v)
+}
+
+func duplicateRune(v *gocui.View, ch rune) {
+	for index := range 2 {
+		if ch == '[' && index > 0 {
+			v.EditWrite(']')
+			break
+		}
+
+		v.EditWrite(ch)
+	}
+
+	v.MoveCursor(-1, 0)
+}
+
+func duplicateLine(v *gocui.View) {
+	cx, cy := v.Cursor()
+	line, err := v.Line(cy)
+	if err != nil {
+		return
+	}
+
+	v.EditGotoToEndOfLine()
+	v.EditNewLine()
+	for _, r := range line {
+		v.EditWrite(r)
+	}
+
+	runes := []rune(line)
+	if cx > len(runes) {
+		cx = len(runes)
+	}
+	_ = v.SetCursor(cx, cy+1)
 }
 
 func GetBodyValue(g *gocui.Gui) string {
