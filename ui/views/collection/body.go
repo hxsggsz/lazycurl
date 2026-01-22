@@ -27,7 +27,6 @@ func Body(g *gocui.Gui, maxX, maxY int) error {
 		v.Wrap = true
 		v.Autoscroll = false
 
-		g.Cursor = true
 		views.HandleBlurInput(g, viewName)
 
 		if err := g.SetKeybinding(viewName, gocui.KeyArrowLeft, gocui.ModShift, prevTab(BodyTabs)); err != nil {

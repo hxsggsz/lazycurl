@@ -15,7 +15,6 @@ func Logs(g *gocui.Gui, maxX, maxY int) error {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		g.Cursor = false
 
 		v.Title = "Logs"
 		v.Wrap = true

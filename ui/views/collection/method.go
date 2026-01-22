@@ -68,7 +68,6 @@ func openMethodModal(g *gocui.Gui, v *gocui.View) error {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		g.Cursor = false
 
 		v.Title = "Select Method"
 		v.FrameColor = gocui.ColorGreen
@@ -89,7 +88,7 @@ func openMethodModal(g *gocui.Gui, v *gocui.View) error {
 		}
 
 		g.SetCurrentView("method_modal")
-
+		g.Cursor = false
 	}
 	return nil
 }
@@ -138,6 +137,7 @@ func selectMethod(g *gocui.Gui, v *gocui.View) error {
 func closeMethodModal(g *gocui.Gui, v *gocui.View) error {
 	g.DeleteView("method_modal")
 	g.SetCurrentView(views.METHOD)
+	g.Cursor = true
 	return nil
 }
 
