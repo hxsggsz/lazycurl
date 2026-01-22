@@ -14,7 +14,7 @@ func blurInput(viewName string) func(g *gocui.Gui, v *gocui.View) error {
 		v.FrameColor = gocui.ColorWhite
 		v.TitleColor = gocui.ColorWhite
 
-		if viewName == v.Name() {
+		if viewName == BODY {
 			bodyInput := v.Buffer()
 			v.Clear()
 
