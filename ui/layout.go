@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"lazycurl/ui/config"
 	"lazycurl/ui/keyboard"
 	"lazycurl/ui/views"
 	"lazycurl/ui/views/collection"
@@ -44,6 +45,7 @@ func layout(g *gocui.Gui) error {
 	keyboard.RegisterGlobalSubmit(g)
 	keyboard.RegisterGlobalViewNavigation(g)
 	helper.ChangeViewFrame(g)
+	config.ShowCursor(g)
 
 	return nil
 }

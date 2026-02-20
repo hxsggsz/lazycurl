@@ -11,7 +11,6 @@ import (
 func inputViewConfig(g *gocui.Gui, v *gocui.View) {
 	v.Title = fmt.Sprintf("[%d] %s", 2, utils.Capitalize(views.URL))
 	v.Editable = true
-	g.Cursor = true
 
 }
 
