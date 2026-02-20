@@ -1,9 +1,7 @@
 package main
 
-import (
-	cmd "lazycurl/cmd/collection"
-)
+import "lazycurl/cmd/config"
 
 func main() {
-	cmd.Execute()
+	config.Execute()
 }
