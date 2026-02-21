@@ -8,7 +8,8 @@ import (
 	"github.com/awesome-gocui/gocui"
 )
 
-func InitLayout() {
+func InitLayout(collectionPath string) {
+	log.Println("Initializing UI with collection:", collectionPath)
 	g, err := gocui.NewGui(gocui.OutputNormal, true)
 	if err != nil {
 		log.Panicln(err)

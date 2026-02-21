@@ -38,7 +38,7 @@ var CreateCollectionCmd = &cobra.Command{
 			return
 		}
 
-		fmt.Printf("Collection -> %s created successfully", collectionName)
+		fmt.Printf("Collection '%s' created successfully\n", collectionName)
 	},
 }
 
