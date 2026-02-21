@@ -21,6 +21,7 @@ func Logs(g *gocui.Gui, maxX, maxY int) error {
 		v.Frame = false
 
 		v.Highlight = true
+		v.Visible = false
 		v.SelFgColor = gocui.ColorBlack
 		v.SelBgColor = gocui.ColorGreen
 

@@ -1,14 +1,16 @@
 package helper
 
-import "github.com/awesome-gocui/gocui"
+import (
+	"github.com/awesome-gocui/gocui"
+)
 
 var (
-	isLogsVisible = false
+	isViewVisible = false
 )
 
 func CloseView(viewName string) func(g *gocui.Gui, v *gocui.View) error {
 	return func(g *gocui.Gui, v *gocui.View) error {
-		isLogsVisible = false
+		isViewVisible = false
 
 		v.FrameColor = gocui.ColorWhite
 		v.TitleColor = gocui.ColorWhite
@@ -22,9 +24,9 @@ func CloseView(viewName string) func(g *gocui.Gui, v *gocui.View) error {
 
 func ToggleView(viewName string) func(g *gocui.Gui, v *gocui.View) error {
 	return func(g *gocui.Gui, v *gocui.View) error {
-		isLogsVisible = !isLogsVisible
+		isViewVisible = !isViewVisible
 
-		if isLogsVisible {
+		if isViewVisible {
 			views := g.Views()
 			for _, view := range views {
 				view.FrameColor = gocui.ColorWhite
@@ -37,6 +39,8 @@ func ToggleView(viewName string) func(g *gocui.Gui, v *gocui.View) error {
 				return err
 			}
 
+			v.Visible = true
+
 			v.Frame = true
 			v.FrameColor = gocui.ColorGreen
 			v.TitleColor = gocui.ColorGreen
@@ -44,8 +48,12 @@ func ToggleView(viewName string) func(g *gocui.Gui, v *gocui.View) error {
 			return nil
 		}
 
-		g.SetViewOnBottom(viewName)
-		v.Frame = false
+		v, err := g.SetViewOnBottom(viewName)
+		if err != nil {
+			return err
+		}
+
+		v.Visible = false
 
 		return nil
 	}

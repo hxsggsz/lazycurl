@@ -63,6 +63,7 @@ func ShowHelpModal(g *gocui.Gui, v *gocui.View) error {
 		v.SelFgColor = gocui.ColorBlack
 		v.SelBgColor = gocui.ColorGreen
 		v.Highlight = true
+		v.Visible = false
 
 		printCategory := func(name string, breakLine ...bool) {
 			shouldBreak := true
@@ -74,8 +75,7 @@ func ShowHelpModal(g *gocui.Gui, v *gocui.View) error {
 				fmt.Fprintln(v)
 			}
 
-			fmt.Fprintf(v, "%s  -- %s --%s\n", ColorBlue, name, ColorReset)
-		}
+			fmt.Fprintf(v, "%s  -- %s --%s\n", ColorBlue, name, ColorReset) }
 
 		printKeybind := func(key, desc string) {
 			fmt.Fprintf(v, "  %s%-10s%s %s\n", ColorGreen, key, ColorReset, desc)
