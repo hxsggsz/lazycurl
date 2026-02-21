@@ -1,9 +1,10 @@
 package main
 
 import (
-	"lazycurl/ui"
+	"lazycurl/cmd"
+	_ "lazycurl/cmd/collections" // calls init()
 )
 
 func main() {
-	ui.InitLayout()
+	cmd.Execute()
 }
