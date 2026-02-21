@@ -20,7 +20,7 @@ var CreateCollectionCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if collectionName == "" {
 			fmt.Printf("Collection name is required")
-			os.Exit(1)
+			return
 		}
 
 		ctx := cmd.Context()
@@ -29,13 +29,13 @@ var CreateCollectionCmd = &cobra.Command{
 		if exists := utils.FilePathExists(lazyCurlPath); !exists {
 			if err := os.Mkdir(lazyCurlPath, os.ModePerm); err != nil {
 				fmt.Printf("Error creating lazyCurlPath directory: %v\n", err)
-				os.Exit(1)
+				return
 			}
 		}
 
 		if err := os.Mkdir(filepath.Join(lazyCurlPath, collectionName), os.ModePerm); err != nil {
 			fmt.Printf("Error creating collection directory: %v\n", err)
-			os.Exit(1)
+			return
 		}
 
 		fmt.Printf("Collection -> %s created successfully", collectionName)

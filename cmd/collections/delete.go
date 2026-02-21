@@ -21,7 +21,7 @@ var DeleteCollectionCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if collectionNameToDelete == "" {
 			fmt.Println("Collection name is required")
-			os.Exit(1)
+			return
 		}
 
 		ctx := cmd.Context()
@@ -30,12 +30,12 @@ var DeleteCollectionCmd = &cobra.Command{
 
 		if exists := utils.FilePathExists(collectionPath); !exists {
 			fmt.Printf("Collection '%s' does not exist\n", collectionNameToDelete)
-			os.Exit(1)
+			return
 		}
 
 		if err := os.RemoveAll(collectionPath); err != nil {
 			fmt.Printf("Error deleting collection '%s': %v\n", collectionNameToDelete, err)
-			os.Exit(1)
+			return
 		}
 
 		fmt.Printf("Collection '%s' deleted successfully\n", collectionNameToDelete)
