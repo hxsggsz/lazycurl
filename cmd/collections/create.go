@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"lazycurl/cmd"
 	"lazycurl/cmd/config"
+	"lazycurl/cmd/utils"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -17,21 +18,23 @@ var CreateCollectionCmd = &cobra.Command{
 	Long:  `Create a new collection in lazycurl.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if collectionName == "" {
-			panic("Collection name is required")
+			fmt.Printf("Collection name is required")
+			os.Exit(1)
 		}
+
 		ctx := cmd.Context()
-		lazycurlPath := ctx.Value(config.LAZYCURL_PATH).(string)
+		lazyCurlPath := ctx.Value(config.LAZYCURL_PATH).(string)
 
-		_, err := os.Stat(lazycurlPath)
-		if exists := !os.IsNotExist(err); !exists {
-
-			if err := os.Mkdir(lazycurlPath, os.ModePerm); err != nil {
-				panic(err)
+		if exists := utils.FilePathExists(lazyCurlPath); !exists {
+			if err := os.Mkdir(lazyCurlPath, os.ModePerm); err != nil {
+				fmt.Printf("Error creating lazyCurlPath directory: %v\n", err)
+				os.Exit(1)
 			}
 		}
 
-		if err := os.Mkdir(lazycurlPath+"/"+collectionName, os.ModePerm); err != nil {
-			panic(err)
+		if err := os.Mkdir(lazyCurlPath+"/"+collectionName, os.ModePerm); err != nil {
+			fmt.Printf("Error creating collection directory: %v\n", err)
+			os.Exit(1)
 		}
 
 		fmt.Printf("Collection -> %s created successfully", collectionName)
