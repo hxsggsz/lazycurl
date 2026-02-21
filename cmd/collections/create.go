@@ -6,6 +6,7 @@ import (
 	"lazycurl/cmd/config"
 	"lazycurl/cmd/utils"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -32,7 +33,7 @@ var CreateCollectionCmd = &cobra.Command{
 			}
 		}
 
-		if err := os.Mkdir(lazyCurlPath+"/"+collectionName, os.ModePerm); err != nil {
+		if err := os.Mkdir(filepath.Join(lazyCurlPath, collectionName), os.ModePerm); err != nil {
 			fmt.Printf("Error creating collection directory: %v\n", err)
 			os.Exit(1)
 		}

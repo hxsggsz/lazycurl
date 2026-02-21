@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"lazycurl/cmd/utils"
 	"os"
+	"path/filepath"
 )
 
 type Config struct {
@@ -13,8 +14,8 @@ type Config struct {
 }
 
 func NewConfig() *Config {
-	configPath := os.Getenv("HOME") + "/.config" + "/lazycurl"
-	lazyCurlPath := os.Getenv("HOME") + "/Downloads" + "/lazycurl"
+	configPath := filepath.Join(os.Getenv("HOME"), ".config", "lazycurl")
+	lazyCurlPath := filepath.Join(os.Getenv("HOME"), "Downloads", "lazycurl")
 
 	c := &Config{
 		configPath:   configPath,
@@ -37,7 +38,7 @@ func (c *Config) createConfigFile() {
 		return
 	}
 
-	file, err := os.Create(c.configPath + "/config.json")
+	file, err := os.Create(filepath.Join(c.configPath, "config.json"))
 	if err != nil {
 		fmt.Println("Something went wrong while try to create config file:", err)
 		return
