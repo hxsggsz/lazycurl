@@ -10,6 +10,43 @@ import (
 	"github.com/awesome-gocui/gocui"
 )
 
+var rootTree = []collection.FileNode{
+	{
+		Name:  "root",
+		IsDir: true,
+		Open:  true,
+		Children: []collection.FileNode{
+			{Name: "arquivo 1", IsDir: false},
+			{
+				Name:  "user",
+				IsDir: true,
+				Open:  true,
+				Children: []collection.FileNode{
+					{Name: "arquivo 2", IsDir: false},
+					{Name: "arquivo 3", IsDir: false},
+					{
+						Name:  "payment",
+						IsDir: true,
+						Open:  true,
+						Children: []collection.FileNode{
+							{Name: "arquivo 4", IsDir: false},
+							{Name: "arquivo 5", IsDir: false},
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		Name:  "consumer",
+		IsDir: true,
+		Open:  false,
+		Children: []collection.FileNode{
+			{Name: "nome da pasta", IsDir: true},
+		},
+	},
+}
+
 func layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
 
@@ -30,6 +67,10 @@ func layout(g *gocui.Gui) error {
 	}
 
 	if err := collection.Response(g, maxX, maxY); err != nil {
+		return err
+	}
+
+	if err := collection.FileTree(g, maxX, maxY, rootTree); err != nil {
 		return err
 	}
 
