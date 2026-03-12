@@ -39,7 +39,7 @@ func RegisterGlobalSubmit(g *gocui.Gui) error {
 		for headers := range headerChan {
 			var allHeaders strings.Builder
 			for key, value := range headers {
-				allHeaders.WriteString(fmt.Sprintf(" %s: %s\n", key, value))
+				fmt.Fprintf(&allHeaders, " %s: %s\n", key, value)
 			}
 
 			finalContent := allHeaders.String()

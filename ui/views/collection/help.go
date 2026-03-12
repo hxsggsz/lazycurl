@@ -65,23 +65,15 @@ func ShowHelpModal(g *gocui.Gui, v *gocui.View) error {
 		v.Highlight = true
 		v.Visible = false
 
-		printCategory := func(name string, breakLine ...bool) {
-			shouldBreak := true
-			if len(breakLine) > 0 {
-				shouldBreak = breakLine[0]
-			}
-
-			if shouldBreak {
-				fmt.Fprintln(v)
-			}
-
-			fmt.Fprintf(v, "%s  -- %s --%s\n", ColorBlue, name, ColorReset) }
+		printCategory := func(name string) {
+			fmt.Fprintf(v, "%s  -- %s --%s\n", ColorBlue, name, ColorReset)
+		}
 
 		printKeybind := func(key, desc string) {
 			fmt.Fprintf(v, "  %s%-10s%s %s\n", ColorGreen, key, ColorReset, desc)
 		}
 
-		printCategory("Global", false)
+		printCategory("Global")
 		printKeybind("<Enter>", "Submit Request")
 		printKeybind("<F10>", "Toggle Logs")
 		printKeybind("<1>", "Focus in select method view")
@@ -110,6 +102,12 @@ func ShowHelpModal(g *gocui.Gui, v *gocui.View) error {
 		printKeybind("<S-Tab>", "Focus in previous input")
 		printKeybind("<S-ArrowRight>", "Go to next tab")
 		printKeybind("<S-ArrowLeft>", "Go to previous tab")
+
+		printCategory("Request Files")
+		printKeybind("<Tab>", "Opens and close the request files view")
+
+		printCategory("Logs")
+		printKeybind("<F10>", "Opens and close the logs view")
 
 		g.SetCurrentView("help_modal")
 	}
