@@ -2,6 +2,7 @@ package ui
 
 import (
 	"lazycurl/output"
+	"lazycurl/pkg/collection"
 	"lazycurl/ui/options"
 	"log"
 
@@ -9,14 +10,16 @@ import (
 )
 
 func InitLayout(collectionPath string) {
-	log.Println("Initializing UI with collection:", collectionPath)
 	g, err := gocui.NewGui(gocui.OutputNormal, true)
 	if err != nil {
 		log.Panicln(err)
 	}
 	defer g.Close()
 
-	g.SetManagerFunc(layout)
+	clt := collection.NewCollection(collectionPath)
+	clt.LoadCollectionFiles()
+
+	g.SetManagerFunc(layout(clt.Files))
 
 	log.SetOutput(&output.LogViewWriter{Gui: g})
 

@@ -1,27 +1,22 @@
-package collection
+package request
 
 import (
 	"fmt"
+	"lazycurl/pkg/collection"
 	"lazycurl/ui/views"
 	"strings"
 
 	"github.com/awesome-gocui/gocui"
 )
 
-type FileNode struct {
-	Name     string
-	IsDir    bool
-	Open     bool
-	Children []FileNode
-}
 
 type flatItem struct {
-	Node  *FileNode
+	Node  *collection.FileNode
 	Level int
 }
 
 var (
-	rootNodes []FileNode
+	rootNodes []collection.FileNode
 	flatItems []flatItem
 )
 
@@ -30,7 +25,7 @@ const (
 	FileTreeLabel = "file_tree_label"
 )
 
-func FileTree(g *gocui.Gui, maxX, maxY int, tree []FileNode) error {
+func FileTree(g *gocui.Gui, maxX, maxY int, tree []collection.FileNode) error {
 	if rootNodes == nil {
 		rootNodes = tree
 	}
@@ -116,8 +111,8 @@ func renderTree(v *gocui.View) {
 func rebuildFlatList() {
 	flatItems = []flatItem{}
 
-	var flatten func(nodes []FileNode, level int)
-	flatten = func(nodes []FileNode, level int) {
+	var flatten func(nodes []collection.FileNode, level int)
+	flatten = func(nodes []collection.FileNode, level int) {
 		for i := range nodes {
 			flatItems = append(flatItems, flatItem{Node: &nodes[i], Level: level})
 			if nodes[i].IsDir && nodes[i].Open {

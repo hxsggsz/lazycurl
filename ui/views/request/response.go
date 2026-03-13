@@ -1,4 +1,4 @@
-package collection
+package request
 
 import (
 	"lazycurl/ui/utils"

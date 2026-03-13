@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -77,14 +78,14 @@ func simplifyHeaders(headers http.Header) map[string]string {
 	simpleHeaders := make(map[string]string)
 
 	for name, values := range headers {
-		headerValue := ""
+		var headerValue strings.Builder
 		for i, v := range values {
 			if i > 0 {
-				headerValue += ", "
+				headerValue.WriteString(", ")
 			}
-			headerValue += v
+			headerValue.WriteString(v)
 		}
-		simpleHeaders[name] = headerValue
+		simpleHeaders[name] = headerValue.String()
 	}
 	return simpleHeaders
 }

@@ -1,11 +1,12 @@
 package ui
 
 import (
+	"lazycurl/pkg/collection"
 	"lazycurl/ui/config"
 	"lazycurl/ui/keyboard"
 	"lazycurl/ui/views"
-	"lazycurl/ui/views/collection"
 	"lazycurl/ui/views/helper"
+	"lazycurl/ui/views/request"
 
 	"github.com/awesome-gocui/gocui"
 )
@@ -47,46 +48,41 @@ var rootTree = []collection.FileNode{
 	},
 }
 
-func layout(g *gocui.Gui) error {
-	maxX, maxY := g.Size()
+func layout(collectionTree []collection.FileNode) func(g *gocui.Gui) error {
+	return func(g *gocui.Gui) error {
+		maxX, maxY := g.Size()
+		if err := request.Method(g, maxX, maxY); err != nil {
+			return err
+		}
+		if err := request.Input(g, maxX); err != nil {
+			return err
+		}
+		if err := request.Headers(g, maxX, maxY); err != nil {
+			return err
+		}
+		if err := request.Body(g, maxX, maxY); err != nil {
+			return err
+		}
+		if err := request.Response(g, maxX, maxY); err != nil {
+			return err
+		}
+		if err := request.FileTree(g, maxX, maxY, collectionTree); err != nil {
+			return err
+		}
 
-	if err := collection.Method(g, maxX, maxY); err != nil {
-		return err
+		if err := views.Logs(g, maxX, maxY); err != nil {
+			return err
+		}
+		if err := request.Help(g, maxX, maxY); err != nil {
+			return err
+		}
+
+		keyboard.RegisterGlobalNumericNavigation(g)
+		keyboard.RegisterGlobalSubmit(g)
+		keyboard.RegisterGlobalViewNavigation(g)
+		helper.ChangeViewFrame(g)
+		config.ShowCursor(g)
+
+		return nil
 	}
-
-	if err := collection.Input(g, maxX); err != nil {
-		return err
-	}
-
-	if err := collection.Headers(g, maxX, maxY); err != nil {
-		return err
-	}
-
-	if err := collection.Body(g, maxX, maxY); err != nil {
-		return err
-	}
-
-	if err := collection.Response(g, maxX, maxY); err != nil {
-		return err
-	}
-
-	if err := collection.FileTree(g, maxX, maxY, rootTree); err != nil {
-		return err
-	}
-
-	if err := views.Logs(g, maxX, maxY); err != nil {
-		return err
-	}
-
-	if err := collection.Help(g, maxX, maxY); err != nil {
-		return err
-	}
-
-	keyboard.RegisterGlobalNumericNavigation(g)
-	keyboard.RegisterGlobalSubmit(g)
-	keyboard.RegisterGlobalViewNavigation(g)
-	helper.ChangeViewFrame(g)
-	config.ShowCursor(g)
-
-	return nil
 }

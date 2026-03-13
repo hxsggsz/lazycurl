@@ -5,7 +5,7 @@ import (
 	"lazycurl/pkg/highlight"
 	"lazycurl/pkg/request"
 	"lazycurl/ui/views"
-	"lazycurl/ui/views/collection"
+	requestView "lazycurl/ui/views/request"
 	"log"
 	"regexp"
 	"strings"
@@ -61,10 +61,10 @@ func submitHandler(g *gocui.Gui, v *gocui.View) error {
 		log.Println("submitting request...")
 
 		res := request.RequestBuilder(
-			collection.GetCurrentMethod(g),
-			collection.GetInputValue(g),
-			collection.GetBodyValue(g),
-			collection.GetHeaders(g),
+			requestView.GetCurrentMethod(g),
+			requestView.GetInputValue(g),
+			requestView.GetBodyValue(g),
+			requestView.GetHeaders(g),
 		).Send()
 
 		statusMsg := coloredStatus(res.StatusCode)
