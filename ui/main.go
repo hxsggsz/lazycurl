@@ -16,12 +16,15 @@ func InitLayout(collectionPath string) {
 	}
 	defer g.Close()
 
+	log.SetOutput(&output.LogViewWriter{Gui: g})
 	clt := collection.NewCollection(collectionPath)
 	clt.LoadCollectionFiles()
+	log.Println(clt.Files)
 
-	g.SetManagerFunc(layout(clt.Files))
+	if len(clt.Files) > 0 {
+		g.SetManagerFunc(layout(clt.Files))
+	}
 
-	log.SetOutput(&output.LogViewWriter{Gui: g})
 
 	options.QuitKeyByind(g)
 

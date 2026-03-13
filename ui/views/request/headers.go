@@ -16,10 +16,14 @@ var (
 	totalHeaders    = 1
 )
 
-func Headers(g *gocui.Gui, maxX, maxY int) error {
+func Headers(g *gocui.Gui, maxX, maxY int, isMenuOpen bool) error {
 	viewName := views.HEADERS
 	x0, y0 := views.FULL, views.LAYOUT_INPUT_HEIGHT+views.LAYOUT_SECTION_Y_GAP
 	x1, y1 := maxX/2, maxY-views.BOTTOM_MESSAGE-views.LOGS_BOTTOM
+
+	if isMenuOpen {
+		x0 = views.FULL + maxX/6
+	}
 
 	if v, err := g.SetView(viewName, x0, y0, x1, y1, 0); err != nil {
 		if err != gocui.ErrUnknownView {
@@ -29,7 +33,7 @@ func Headers(g *gocui.Gui, maxX, maxY int) error {
 	}
 
 	for i := 0; i < totalHeaders; i++ {
-		if err := renderHeaderPair(g, i, maxX); err != nil {
+		if err := renderHeaderPair(g, i, maxX, isMenuOpen); err != nil {
 			return err
 		}
 	}
@@ -37,11 +41,15 @@ func Headers(g *gocui.Gui, maxX, maxY int) error {
 	return nil
 }
 
-func renderHeaderPair(g *gocui.Gui, index int, maxX int) error {
+func renderHeaderPair(g *gocui.Gui, index int, maxX int, isMenuOpen bool) error {
 	rowY := views.LAYOUT_INPUT_HEIGHT + views.LAYOUT_SECTION_Y_GAP + 1 + (index * 3)
 
 	keyName := fmt.Sprintf("header_key_%d", index)
-	kx0, ky0, kx1, ky1 := 1, rowY, (maxX/4)-1, rowY+2
+	kx0, ky0, kx1, ky1 := views.FULL, rowY, (maxX/4)-1, rowY+2
+
+	if isMenuOpen {
+		kx0 = views.FULL + maxX/6 + 1
+	}
 
 	if v, err := g.SetView(keyName, kx0, ky0, kx1, ky1, 0); err != nil {
 		if err != gocui.ErrUnknownView {
@@ -57,7 +65,11 @@ func renderHeaderPair(g *gocui.Gui, index int, maxX int) error {
 	}
 
 	valName := fmt.Sprintf("header_val_%d", index)
-	vx0, vy0, vx1, vy1 := (maxX/4)+1, rowY, (maxX/2)-1, rowY+2
+	vx0, vy0, vx1, vy1 := views.FULL, rowY, (maxX/2)-1, rowY+2
+
+	if isMenuOpen {
+		vx0 = (maxX / 4) + 1
+	}
 
 	if v, err := g.SetView(valName, vx0, vy0, vx1, vy1, 0); err != nil {
 		if err != gocui.ErrUnknownView {

@@ -3,12 +3,12 @@ package request
 import (
 	"fmt"
 	"lazycurl/pkg/collection"
+	"lazycurl/ui/utils"
 	"lazycurl/ui/views"
 	"strings"
 
 	"github.com/awesome-gocui/gocui"
 )
-
 
 type flatItem struct {
 	Node  *collection.FileNode
@@ -20,68 +20,90 @@ var (
 	flatItems []flatItem
 )
 
-const (
-	FileTreeView  = "file_tree_modal"
-	FileTreeLabel = "file_tree_label"
-)
-
-func FileTree(g *gocui.Gui, maxX, maxY int, tree []collection.FileNode) error {
+func FileTree(g *gocui.Gui, maxX, maxY int, tree []collection.FileNode, fullScreen bool) (bool, error) {
 	if rootNodes == nil {
 		rootNodes = tree
 	}
 
-	if err := initFileTreeModal(g, maxX, maxY); err != nil {
-		return err
+	isMenuOpen, err := initFileTreeModal(g, maxX, maxY, fullScreen)
+	if err != nil {
+		return isMenuOpen, err
 	}
 
-	if err := g.SetKeybinding("", gocui.KeyTab, gocui.ModNone, toggleFileTree); err != nil {
-		return err
+	if err := g.SetKeybinding("", gocui.KeyCtrlSlash, gocui.ModNone, toggleFileTree); err != nil {
+		return isMenuOpen, err
 	}
 
-	return nil
+	return isMenuOpen, nil
 }
 
-func initFileTreeModal(g *gocui.Gui, maxX, maxY int) error {
-	w, h := int(float64(maxX)*0.6), int(float64(maxY)*0.6)
-	x0 := (maxX - w) / 2
-	y0 := (maxY - h) / 2
-	x1, y1 := x0+w, y0+h
+func initFileTreeModal(g *gocui.Gui, maxX, maxY int, fullScreen bool) (bool, error) {
+	var x0, y0, x1, y1 int
 
-	if v, err := g.SetView(FileTreeView, x0, y0, x1, y1, 0); err != nil {
+	if fullScreen {
+		x0 = 0
+		y0 = 0
+		x1 = maxX
+		y1 = maxY
+	} else {
+		height := maxY - views.BOTTOM_MESSAGE
+		x0 = views.FULL
+		x1 = maxX/6 - 2
+		y0 = views.LAYOUT_INPUT_HEIGHT + views.LAYOUT_SECTION_Y_GAP
+		y1 = height - views.LOGS_BOTTOM
+	}
+
+	v, err := g.SetView(views.FILE_TREE_VIEW, x0, y0, x1, y1, 0)
+	if err != nil {
 		if err != gocui.ErrUnknownView {
-			return err
+			return true, err
 		}
 
-		v.Title = " [2] Files "
-		v.FrameColor = gocui.ColorGreen
-		v.TitleColor = gocui.ColorGreen
-		v.Highlight = true
-		v.SelBgColor = gocui.ColorGreen
-		v.SelFgColor = gocui.ColorBlack
-		v.Visible = false
+		v.Title = " [Tab] Files "
+		v.Highlight = false
+		v.Visible = true
+		rebuildFlatList()
+		renderTree(v)
+
+		// Garante que a view sobreponha as outras (Z-index)
+		if fullScreen {
+			g.SetViewOnTop(views.FILE_TREE_VIEW)
+		}
 
 		if err := setupModalKeys(g); err != nil {
-			return err
+			return v.Visible, err
 		}
 	}
-	return nil
+
+	if utils.ViewHasFocus(g, views.FILE_TREE_VIEW) {
+		v.Highlight = true
+	} else {
+		v.Highlight = false
+	}
+
+	return v.Visible, nil
 }
 
 func toggleFileTree(g *gocui.Gui, v *gocui.View) error {
-	fileView, err := g.View(FileTreeView)
+	fileView, err := g.View(views.FILE_TREE_VIEW)
 	if err != nil {
 		return err
 	}
 
 	if !fileView.Visible {
 		fileView.Visible = true
-		g.SetCurrentView(FileTreeView)
-		g.SetViewOnTop(FileTreeView)
+		g.SetCurrentView(views.FILE_TREE_VIEW)
+		g.SetViewOnTop(views.FILE_TREE_VIEW)
+
+		fileView.FrameColor = gocui.ColorGreen
+		fileView.TitleColor = gocui.ColorGreen
 		rebuildFlatList()
 		renderTree(fileView)
 	} else {
 		fileView.Visible = false
-		g.SetCurrentView("main")
+		fileView.FrameColor = gocui.ColorWhite
+		fileView.TitleColor = gocui.ColorWhite
+		g.SetCurrentView(views.METHOD)
 	}
 	return nil
 }
@@ -141,8 +163,8 @@ func toggleFolder(g *gocui.Gui, v *gocui.View) error {
 }
 
 func setupModalKeys(g *gocui.Gui) error {
-	g.SetKeybinding(FileTreeView, gocui.KeyEnter, gocui.ModNone, toggleFolder)
-	g.SetKeybinding(FileTreeView, gocui.KeySpace, gocui.ModNone, toggleFolder)
+	g.SetKeybinding(views.FILE_TREE_VIEW, gocui.KeyEnter, gocui.ModNone, toggleFolder)
+	g.SetKeybinding(views.FILE_TREE_VIEW, gocui.KeySpace, gocui.ModNone, toggleFolder)
 
 	return nil
 }

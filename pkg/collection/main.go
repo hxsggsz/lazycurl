@@ -11,6 +11,7 @@ type FileNode struct {
 	Name     string
 	IsDir    bool
 	Open     bool
+	Path     string
 	Children []FileNode
 }
 
@@ -30,6 +31,7 @@ func (c *Collection) LoadCollectionFiles() {
 		fmt.Printf("Erro ao carregar coleção: %v\n", err)
 		return
 	}
+
 	c.Files = nodes
 }
 
@@ -44,6 +46,7 @@ func buildTree(currentPath string) ([]FileNode, error) {
 		node := FileNode{
 			Name:  entry.Name(),
 			IsDir: entry.IsDir(),
+			Path:  filepath.Join(currentPath, entry.Name()),
 			Open:  false,
 		}
 
@@ -60,4 +63,5 @@ func buildTree(currentPath string) ([]FileNode, error) {
 	}
 
 	return nodes, nil
+
 }

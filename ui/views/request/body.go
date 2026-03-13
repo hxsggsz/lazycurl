@@ -9,11 +9,16 @@ import (
 
 const bodyIndent = "  "
 
-func Body(g *gocui.Gui, maxX, maxY int) error {
+func Body(g *gocui.Gui, maxX, maxY int, isMenuOpen bool) error {
 	viewName := views.BODY
 	height := maxY - views.BOTTOM_MESSAGE
 
 	x0 := views.FULL
+
+	if isMenuOpen {
+		x0 = views.FULL + maxX/6
+	}
+
 	x1 := maxX / 2
 
 	y0 := views.LAYOUT_INPUT_HEIGHT + views.LAYOUT_SECTION_Y_GAP

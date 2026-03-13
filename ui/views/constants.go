@@ -9,6 +9,8 @@ const (
 	RESPONSE         = "response"
 	RESPONSE_HEADERS = "response_headers"
 	LOGS             = "logs"
+	FILE_TREE_VIEW   = "file_tree_modal"
+	FILE_TREE_LABEL  = "file_tree_label"
 )
 
 const (
