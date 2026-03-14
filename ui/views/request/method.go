@@ -78,7 +78,7 @@ func openMethodModal(g *gocui.Gui, v *gocui.View) error {
 		v.SelBgColor = gocui.ColorGreen
 
 		for _, method := range methods {
-			fmt.Fprintln(v, method)
+			fmt.Fprintln(v, utils.FormatLineFullWidth(v, method))
 		}
 
 		v.ViewLinesHeight()

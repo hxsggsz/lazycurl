@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"lazycurl/pkg/highlight"
 	"lazycurl/pkg/request"
+	"lazycurl/ui/utils"
 	"lazycurl/ui/views"
 	requestView "lazycurl/ui/views/request"
 	"log"
@@ -85,7 +86,8 @@ func UpdateHeadersView(g *gocui.Gui, content string, totalHeaders int) error {
 		v.Clear()
 		v.Title = fmt.Sprintf("[4] Response *Headers (%d)", totalHeaders)
 
-		fmt.Fprint(v, content)
+		log.Println("content", content)
+		fmt.Fprint(v, utils.FormatLineFullWidth(v, content))
 
 		resView, err := g.View(views.RESPONSE)
 		if err != nil {
@@ -111,15 +113,15 @@ func UpdateResponseView(g *gocui.Gui, content string) error {
 
 		if len(parts) >= 2 {
 			highlighetdContent := highlight.Json(parts[1])
-			fmt.Fprint(v, parts[0])
-			fmt.Fprint(v, highlighetdContent)
+			fmt.Fprint(v, utils.FormatLineFullWidth(v, parts[0]))
+			fmt.Fprint(v, utils.FormatLineFullWidth(v, highlighetdContent))
 
 			return nil
 		}
 
 		highlighetdContent := highlight.Json(content)
 
-		fmt.Fprint(v, highlighetdContent)
+		fmt.Fprint(v, utils.FormatLineFullWidth(v, highlighetdContent))
 
 		return nil
 	})

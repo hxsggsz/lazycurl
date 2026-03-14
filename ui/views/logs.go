@@ -36,7 +36,7 @@ func ShowLogsModal(g *gocui.Gui) error {
 		v.Autoscroll = true // Scroll automático
 		v.Visible = false
 
-		if err := g.SetKeybinding("logs", gocui.KeyEsc, gocui.ModNone, helper.CloseView("logs")); err != nil {
+		if err := g.SetKeybinding("logs", gocui.KeyEsc, gocui.ModNone, helper.ToggleView("logs")); err != nil {
 			return err
 		}
 	}

@@ -2,19 +2,11 @@ package request
 
 import (
 	"fmt"
+	"lazycurl/ui/utils"
 	"lazycurl/ui/views"
 	"lazycurl/ui/views/helper"
 
 	"github.com/awesome-gocui/gocui"
-)
-
-const (
-	ColorGreen  = "\033[32m"
-	ColorBlue   = "\033[34m"
-	ColorCyan   = "\033[36m"
-	ColorYellow = "\033[33m"
-	ColorReset  = "\033[0m"
-	BgSelected  = "\033[47;30m" // Fundo branco, texto preto (estilo seleção)
 )
 
 func Help(g *gocui.Gui, maxX, maxY int) error {
@@ -38,7 +30,7 @@ func Help(g *gocui.Gui, maxX, maxY int) error {
 			return err
 		}
 
-		if err := g.SetKeybinding("help_modal", gocui.KeyEsc, gocui.ModNone, helper.CloseView("help_modal")); err != nil {
+		if err := g.SetKeybinding("help_modal", gocui.KeyEsc, gocui.ModNone, helper.ToggleView("help_modal")); err != nil {
 			return err
 		}
 	}
@@ -66,11 +58,16 @@ func ShowHelpModal(g *gocui.Gui, v *gocui.View) error {
 		v.Visible = false
 
 		printCategory := func(name string) {
-			fmt.Fprintf(v, "%s  -- %s --%s\n", ColorBlue, name, ColorReset)
+
+			title := views.CYAN + " -- " + name + " -- " + views.RESET
+			title = utils.FormatLineFullWidth(v, fmt.Sprintf(title))
+			fmt.Fprintf(v, "%s\n", title)
 		}
 
 		printKeybind := func(key, desc string) {
-			fmt.Fprintf(v, "  %s%-10s%s %s\n", ColorGreen, key, ColorReset, desc)
+			keybind := views.GREEN + " " + key + "  " + views.RESET + desc
+			keybind = utils.FormatLineFullWidth(v, fmt.Sprintf(keybind))
+			fmt.Fprintf(v, "  %s\n", keybind)
 		}
 
 		printCategory("Global")
@@ -104,7 +101,10 @@ func ShowHelpModal(g *gocui.Gui, v *gocui.View) error {
 		printKeybind("<S-ArrowLeft>", "Go to previous tab")
 
 		printCategory("Request Files")
-		printKeybind("<Tab>", "Opens and close the request files view")
+		printKeybind("<Tab>", "Focus the request files view")
+		printKeybind("<C-/>", "Opens and close the request files view")
+		printKeybind("<Space>", "Opens and close the request folder")
+		printKeybind("<Enter>", "Opens and close the request folder")
 
 		printCategory("Logs")
 		printKeybind("<F10>", "Opens and close the logs view")

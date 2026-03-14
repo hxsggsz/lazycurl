@@ -8,20 +8,6 @@ var (
 	isViewVisible = false
 )
 
-func CloseView(viewName string) func(g *gocui.Gui, v *gocui.View) error {
-	return func(g *gocui.Gui, v *gocui.View) error {
-		isViewVisible = false
-
-		v.FrameColor = gocui.ColorWhite
-		v.TitleColor = gocui.ColorWhite
-		v.Frame = false
-
-		g.SetViewOnBottom(viewName)
-
-		return nil
-	}
-}
-
 func ToggleView(viewName string) func(g *gocui.Gui, v *gocui.View) error {
 	return func(g *gocui.Gui, v *gocui.View) error {
 		isViewVisible = !isViewVisible

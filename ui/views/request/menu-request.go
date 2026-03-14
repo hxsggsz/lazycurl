@@ -62,6 +62,8 @@ func initFileTreeModal(g *gocui.Gui, maxX, maxY int, fullScreen bool) (bool, err
 		v.Title = " [Tab] Files "
 		v.Highlight = false
 		v.Visible = true
+		v.SelFgColor = gocui.ColorBlack
+		v.SelBgColor = gocui.ColorGreen
 		rebuildFlatList()
 		renderTree(v)
 
@@ -95,14 +97,10 @@ func toggleFileTree(g *gocui.Gui, v *gocui.View) error {
 		g.SetCurrentView(views.FILE_TREE_VIEW)
 		g.SetViewOnTop(views.FILE_TREE_VIEW)
 
-		fileView.FrameColor = gocui.ColorGreen
-		fileView.TitleColor = gocui.ColorGreen
 		rebuildFlatList()
 		renderTree(fileView)
 	} else {
 		fileView.Visible = false
-		fileView.FrameColor = gocui.ColorWhite
-		fileView.TitleColor = gocui.ColorWhite
 		g.SetCurrentView(views.METHOD)
 	}
 	return nil
@@ -114,7 +112,10 @@ func renderTree(v *gocui.View) {
 	for _, item := range flatItems {
 		indent := strings.Repeat("  ", item.Level)
 		if !item.Node.IsDir {
-			fmt.Fprintf(v, "%s  %s\n", indent, item.Node.Name)
+
+			fileLine := indent + " " + item.Node.Name
+			formatedFile := utils.FormatLineFullWidth(v, fileLine)
+			fmt.Fprintf(v, "%s\n", formatedFile)
 			continue
 		}
 
@@ -123,7 +124,8 @@ func renderTree(v *gocui.View) {
 			icon = "▼"
 		}
 
-		coloredDir := views.GREEN + indent + icon + " " + item.Node.Name + views.RESET
+		coloredDir := views.GREEN + indent + " " + icon + " " + item.Node.Name + views.RESET
+		coloredDir = utils.FormatLineFullWidth(v, coloredDir)
 		fmt.Fprintf(v, "%s\n", coloredDir)
 	}
 
