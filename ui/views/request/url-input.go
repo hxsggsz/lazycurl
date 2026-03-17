@@ -8,7 +8,7 @@ import (
 	"github.com/awesome-gocui/gocui"
 )
 
-func inputViewConfig(g *gocui.Gui, v *gocui.View) {
+func inputViewConfig(v *gocui.View) {
 	v.Title = fmt.Sprintf("[%d] %s", 2, utils.Capitalize(views.URL))
 	v.Editable = true
 
@@ -27,7 +27,7 @@ func Input(g *gocui.Gui, maxX int) error {
 			return err
 		}
 
-		inputViewConfig(g, v)
+		inputViewConfig(v)
 		views.HandleBlurInput(g, viewName)
 
 		if hasFocus := utils.ViewHasFocus(g, viewName); hasFocus {

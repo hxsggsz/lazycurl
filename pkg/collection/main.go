@@ -2,7 +2,6 @@ package collection
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -24,8 +23,12 @@ func NewCollection(filePath string) *Collection {
 	return &Collection{filePath: filePath}
 }
 
+func (c *Collection) AddFolders(foldersPath string) error {
+	path := filepath.Join(c.filePath, foldersPath)
+	return os.MkdirAll(path, os.ModePerm)
+}
+
 func (c *Collection) LoadCollectionFiles() {
-	log.Println("loading collection files")
 	nodes, err := buildTree(c.filePath)
 	if err != nil {
 		fmt.Printf("Erro ao carregar coleção: %v\n", err)

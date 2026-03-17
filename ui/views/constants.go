@@ -10,7 +10,7 @@ const (
 	RESPONSE_HEADERS = "response_headers"
 	LOGS             = "logs"
 	FILE_TREE_VIEW   = "file_tree_modal"
-	FILE_TREE_LABEL  = "file_tree_label"
+	ADD_FOLDER       = "add_folder_modal"
 )
 
 const (

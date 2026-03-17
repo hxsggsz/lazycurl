@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"log"
 	"regexp"
 	"strings"
 	"unicode/utf8"
@@ -26,6 +25,5 @@ func FormatLineFullWidth(v *gocui.View, line string) string {
 		return line
 	}
 
-	log.Println(paddingCount)
 	return line + strings.Repeat(" ", paddingCount)
 }

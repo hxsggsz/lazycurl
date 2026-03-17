@@ -1,10 +1,12 @@
-package request
+package filetree
 
 import (
 	"fmt"
 	"lazycurl/pkg/collection"
 	"lazycurl/ui/utils"
 	"lazycurl/ui/views"
+	"lazycurl/ui/views/helper"
+	"log"
 	"strings"
 
 	"github.com/awesome-gocui/gocui"
@@ -20,7 +22,7 @@ var (
 	flatItems []flatItem
 )
 
-func FileTree(g *gocui.Gui, maxX, maxY int, tree []collection.FileNode, fullScreen bool) (bool, error) {
+func FileTree(g *gocui.Gui, maxX, maxY int, tree []collection.FileNode, fullScreen bool, addFolderFunc func(foldersPath string) error) (bool, error) {
 	if rootNodes == nil {
 		rootNodes = tree
 	}
@@ -29,6 +31,8 @@ func FileTree(g *gocui.Gui, maxX, maxY int, tree []collection.FileNode, fullScre
 	if err != nil {
 		return isMenuOpen, err
 	}
+
+	addFolder(g, maxX, maxY, addFolderFunc)
 
 	if err := g.SetKeybinding("", gocui.KeyCtrlSlash, gocui.ModNone, toggleFileTree); err != nil {
 		return isMenuOpen, err
@@ -56,6 +60,7 @@ func initFileTreeModal(g *gocui.Gui, maxX, maxY int, fullScreen bool) (bool, err
 	v, err := g.SetView(views.FILE_TREE_VIEW, x0, y0, x1, y1, 0)
 	if err != nil {
 		if err != gocui.ErrUnknownView {
+			log.Println("Erro ao iniciar file tree:", err)
 			return true, err
 		}
 
@@ -167,6 +172,7 @@ func toggleFolder(g *gocui.Gui, v *gocui.View) error {
 func setupModalKeys(g *gocui.Gui) error {
 	g.SetKeybinding(views.FILE_TREE_VIEW, gocui.KeyEnter, gocui.ModNone, toggleFolder)
 	g.SetKeybinding(views.FILE_TREE_VIEW, gocui.KeySpace, gocui.ModNone, toggleFolder)
+	g.SetKeybinding(views.FILE_TREE_VIEW, gocui.KeyCtrlF, gocui.ModNone, helper.ToggleView(views.ADD_FOLDER))
 
 	return nil
 }

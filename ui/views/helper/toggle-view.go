@@ -1,6 +1,8 @@
 package helper
 
 import (
+	"log"
+
 	"github.com/awesome-gocui/gocui"
 )
 
@@ -8,6 +10,20 @@ var (
 	isViewVisible = false
 )
 
+func CloseView(viewName string) func(g *gocui.Gui, v *gocui.View) error {
+	return func(g *gocui.Gui, v *gocui.View) error {
+		log.Println("close view called")
+
+		v, err := g.SetViewOnBottom(viewName)
+		if err != nil {
+			return err
+		}
+
+		v.Visible = false
+
+		return nil
+	}
+}
 func ToggleView(viewName string) func(g *gocui.Gui, v *gocui.View) error {
 	return func(g *gocui.Gui, v *gocui.View) error {
 		isViewVisible = !isViewVisible

@@ -86,7 +86,6 @@ func UpdateHeadersView(g *gocui.Gui, content string, totalHeaders int) error {
 		v.Clear()
 		v.Title = fmt.Sprintf("[4] Response *Headers (%d)", totalHeaders)
 
-		log.Println("content", content)
 		fmt.Fprint(v, utils.FormatLineFullWidth(v, content))
 
 		resView, err := g.View(views.RESPONSE)
@@ -109,7 +108,6 @@ func UpdateResponseView(g *gocui.Gui, content string) error {
 		v.Clear()
 
 		parts := strings.SplitN(content, "\n", 2)
-		log.Println("parts", parts)
 
 		if len(parts) >= 2 {
 			highlighetdContent := highlight.Json(parts[1])

@@ -7,6 +7,7 @@ import (
 	"lazycurl/ui/views"
 	"lazycurl/ui/views/helper"
 	"lazycurl/ui/views/request"
+	filetree "lazycurl/ui/views/request/file-tree"
 
 	"github.com/awesome-gocui/gocui"
 )
@@ -48,7 +49,7 @@ var rootTree = []collection.FileNode{
 	},
 }
 
-func layout(collectionTree []collection.FileNode) func(g *gocui.Gui) error {
+func layout(collection *collection.Collection) func(g *gocui.Gui) error {
 	return func(g *gocui.Gui) error {
 		maxX, maxY := g.Size()
 
@@ -60,7 +61,7 @@ func layout(collectionTree []collection.FileNode) func(g *gocui.Gui) error {
 			return err
 		}
 
-		isMenuOpen, err := request.FileTree(g, maxX, maxY, collectionTree, false)
+		isMenuOpen, err := filetree.FileTree(g, maxX, maxY, collection.Files, false, collection.AddFolders)
 		if err != nil {
 			return err
 		}

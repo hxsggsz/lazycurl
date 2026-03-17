@@ -9,6 +9,8 @@ import (
 	"github.com/awesome-gocui/gocui"
 )
 
+type AddFoldersFunc func(foldersPath string) error
+
 func InitLayout(collectionPath string) {
 	g, err := gocui.NewGui(gocui.OutputNormal, true)
 	if err != nil {
@@ -19,12 +21,10 @@ func InitLayout(collectionPath string) {
 	log.SetOutput(&output.LogViewWriter{Gui: g})
 	clt := collection.NewCollection(collectionPath)
 	clt.LoadCollectionFiles()
-	log.Println(clt.Files)
 
 	if len(clt.Files) > 0 {
-		g.SetManagerFunc(layout(clt.Files))
+		g.SetManagerFunc(layout(clt))
 	}
-
 
 	options.QuitKeyByind(g)
 
