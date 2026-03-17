@@ -41,6 +41,23 @@ func FileTree(g *gocui.Gui, maxX, maxY int, tree []collection.FileNode, fullScre
 	return isMenuOpen, nil
 }
 
+func getCursorPath(g *gocui.Gui) string {
+	v, err := g.View(views.FILE_TREE_VIEW) // Use seu helper para pegar a view
+	if err != nil {
+		return ""
+	}
+
+	_, cy := v.Cursor()
+	_, oy := v.Origin()
+	idx := cy + oy
+
+	if idx >= 0 && idx < len(flatItems) {
+		return flatItems[idx].Node.Path
+	}
+
+	return ""
+}
+
 func initFileTreeModal(g *gocui.Gui, maxX, maxY int, fullScreen bool) (bool, error) {
 	var x0, y0, x1, y1 int
 

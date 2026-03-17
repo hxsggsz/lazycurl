@@ -4,6 +4,7 @@ import (
 	"lazycurl/ui/views"
 	"lazycurl/ui/views/helper"
 	"log"
+	"path"
 	"time"
 
 	"github.com/awesome-gocui/gocui"
@@ -51,17 +52,20 @@ func getFoldersInput(g *gocui.Gui) string {
 
 func createFolders(addFolderFunc func(foldersPath string) error) func(*gocui.Gui, *gocui.View) error {
 	return func(g *gocui.Gui, v *gocui.View) error {
-		foldersPath := getFoldersInput(g)
-		if foldersPath == "" {
+		newFoldersPath := getFoldersInput(g)
+		if newFoldersPath == "" {
 			return nil // Ou exibir uma mensagem de erro
 		}
 
-		if err := addFolderFunc(foldersPath); err != nil {
+		cursorPath := getCursorPath(g)
+
+		finalPath := path.Join(cursorPath, newFoldersPath)
+
+		if err := addFolderFunc(finalPath); err != nil {
 			log.Println("Erro ao criar pasta:", err)
 			return err
 		}
 
-		log.Printf("Pasta(s) '%s' criada(s) com sucesso!", foldersPath)
 		helper.CloseView(views.ADD_FOLDER)(g, v)
 		views.ShowToast(g, "folder created successfully", "success", 2*time.Second)
 		return nil

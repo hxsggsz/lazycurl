@@ -8,7 +8,6 @@ import (
 	"lazycurl/ui/views/helper"
 	"lazycurl/ui/views/request"
 	filetree "lazycurl/ui/views/request/file-tree"
-
 	"github.com/awesome-gocui/gocui"
 )
 
