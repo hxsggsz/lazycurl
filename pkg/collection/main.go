@@ -1,10 +1,12 @@
 package collection
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // FileNode represents a file or directory in the collection tree.
@@ -87,6 +89,59 @@ func (c *Collection) DeletePath(relPath string) error {
 	}
 	c.LoadCollectionFiles()
 	return nil
+}
+
+// AddFile creates a new JSON request file at the specified relative path.
+// The file contains a default HTTP request structure with the given method.
+func (c *Collection) AddFile(relPath string) error {
+	if !strings.HasSuffix(relPath, ".json") {
+		relPath = relPath + ".json"
+	}
+	fullPath := filepath.Join(c.filePath, relPath)
+
+	dir := filepath.Dir(fullPath)
+	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+		return fmt.Errorf("failed to create directory for %s: %w", relPath, err)
+	}
+
+	requestData := map[string]interface{}{
+		"method":  "GET",
+		"url":     "",
+		"headers": map[string]string{},
+		"body":    "",
+	}
+
+	data, err := json.MarshalIndent(requestData, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal request data: %w", err)
+	}
+
+	if err := os.WriteFile(fullPath, data, 0644); err != nil {
+		return fmt.Errorf("failed to write file %s: %w", relPath, err)
+	}
+
+	c.LoadCollectionFiles()
+	return nil
+}
+
+// RenameNode renames a file or directory in the collection and reloads.
+// oldRelPath is relative to the collection root, newName is just the new name (not a path).
+func (c *Collection) RenameNode(oldRelPath, newName string) error {
+	oldFullPath := filepath.Join(c.filePath, oldRelPath)
+	dir := filepath.Dir(oldFullPath)
+	newFullPath := filepath.Join(dir, newName)
+
+	if err := os.Rename(oldFullPath, newFullPath); err != nil {
+		return fmt.Errorf("failed to rename %s to %s: %w", oldRelPath, newName, err)
+	}
+
+	c.LoadCollectionFiles()
+	return nil
+}
+
+// GetRootPath returns the root directory path of the collection.
+func (c *Collection) GetRootPath() string {
+	return c.filePath
 }
 
 // LoadCollectionFiles reads the collection root directory from disk and
