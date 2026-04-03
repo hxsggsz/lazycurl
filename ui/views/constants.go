@@ -12,6 +12,9 @@ const (
 	FILE_TREE_VIEW   = "file_tree_modal"
 	ADD_FOLDER       = "add_folder_modal"
 	DELETE_NODE      = "delete_node"
+	ADD_FILE         = "add_file_modal"
+	EDIT_FOLDER      = "edit_folder_modal"
+	EDIT_FILE        = "edit_file_modal"
 )
 
 const (

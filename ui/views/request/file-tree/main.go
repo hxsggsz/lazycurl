@@ -1,10 +1,12 @@
 package filetree
 
 import (
+	"log"
+	"time"
+
 	fm "lazycurl/pkg/file-manager"
 	"lazycurl/ui/utils"
 	"lazycurl/ui/views"
-	"log"
 
 	"github.com/awesome-gocui/gocui"
 )
@@ -19,6 +21,9 @@ func FileTree(g *gocui.Gui, maxX, maxY int, fm *fm.FileManager, fullScreen bool)
 
 	addFolder(g, maxX, maxY, fm)
 	deleteNode(g, maxX, maxY, fm)
+	addFile(g, maxX, maxY, fm)
+	editFolder(g, maxX, maxY, fm)
+	editFile(g, maxX, maxY, fm)
 
 	if err := g.SetKeybinding("", gocui.KeyCtrlSlash, gocui.ModNone, fm.ToggleFileTree); err != nil {
 		return isMenuOpen, err
@@ -69,6 +74,31 @@ func initFileTreeModal(g *gocui.Gui, maxX, maxY int, fullScreen bool, fm *fm.Fil
 
 		g.SetKeybinding(views.FILE_TREE_VIEW, gocui.KeyDelete, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
 			renderDeleteConfirm(g, fm)
+			return nil
+		})
+
+		g.SetKeybinding(views.FILE_TREE_VIEW, gocui.KeyCtrlN, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
+			if modalView, err := g.View(views.ADD_FILE); err == nil {
+				modalView.Clear()
+				modalView.Visible = true
+			}
+			g.SetCurrentView(views.ADD_FILE)
+			g.SetViewOnTop(views.ADD_FILE)
+			return nil
+		})
+
+		g.SetKeybinding(views.FILE_TREE_VIEW, gocui.KeyCtrlR, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
+			node, err := fm.GetSelectedNode(g)
+			if err != nil {
+				views.ShowToast(g, "no item selected", "error", 2*time.Second)
+				return nil
+			}
+
+			if node.IsDir {
+				triggerEditFolder(fm)(g, v)
+			} else {
+				triggerEditFile(fm)(g, v)
+			}
 			return nil
 		})
 	}
