@@ -30,7 +30,7 @@ func addFolder(g *gocui.Gui, maxX, maxY int, fm *fm.FileManager) error {
 		v.Frame = true
 		v.Wrap = true
 		v.Editable = true
-		v.Visible = true
+		v.Visible = false
 
 		v.FrameColor = gocui.ColorGreen
 		v.TitleColor = gocui.ColorGreen

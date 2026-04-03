@@ -25,7 +25,6 @@ type flatItem struct {
 	Level int
 }
 
-
 func (fm *FileManager) ToggleFileTree(g *gocui.Gui, v *gocui.View) error {
 	fileView, err := g.View(views.FILE_TREE_VIEW)
 	if err != nil {
@@ -128,3 +127,19 @@ func (fm *FileManager) UpdateTree(g *gocui.Gui) {
 	}
 }
 
+// GetSelectedNode returns the FileNode at the current cursor position in the file tree view.
+func (fm *FileManager) GetSelectedNode(g *gocui.Gui) (*collection.FileNode, error) {
+	v, err := g.View(views.FILE_TREE_VIEW)
+	if err != nil {
+		return nil, err
+	}
+
+	_, cy := v.Cursor()
+	_, oy := v.Origin()
+	idx := cy + oy
+
+	if idx < 0 || idx >= len(fm.flatItems) {
+		return nil, fmt.Errorf("no item selected")
+	}
+	return fm.flatItems[idx].Node, nil
+}

@@ -14,7 +14,7 @@ import (
 )
 
 func layout(collection *collection.Collection) func(g *gocui.Gui) error {
-	fm := &fm.FileManager{Collection: collection}
+	fileManager := &fm.FileManager{Collection: collection}
 
 	return func(g *gocui.Gui) error {
 		maxX, maxY := g.Size()
@@ -27,7 +27,7 @@ func layout(collection *collection.Collection) func(g *gocui.Gui) error {
 			return err
 		}
 
-		isMenuOpen, err := filetree.FileTree(g, maxX, maxY, fm, false)
+		isMenuOpen, err := filetree.FileTree(g, maxX, maxY, fileManager, false)
 		if err != nil {
 			return err
 		}

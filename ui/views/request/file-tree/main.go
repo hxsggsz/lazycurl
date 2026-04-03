@@ -18,6 +18,7 @@ func FileTree(g *gocui.Gui, maxX, maxY int, fm *fm.FileManager, fullScreen bool)
 	}
 
 	addFolder(g, maxX, maxY, fm)
+	deleteNode(g, maxX, maxY, fm)
 
 	if err := g.SetKeybinding("", gocui.KeyCtrlSlash, gocui.ModNone, fm.ToggleFileTree); err != nil {
 		return isMenuOpen, err
@@ -65,6 +66,11 @@ func initFileTreeModal(g *gocui.Gui, maxX, maxY int, fullScreen bool, fm *fm.Fil
 		if err := fm.SetupModalKeys(g); err != nil {
 			return v.Visible, err
 		}
+
+		g.SetKeybinding(views.FILE_TREE_VIEW, gocui.KeyDelete, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
+			renderDeleteConfirm(g, fm)
+			return nil
+		})
 	}
 
 	if utils.ViewHasFocus(g, views.FILE_TREE_VIEW) {

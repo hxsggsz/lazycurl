@@ -11,6 +11,7 @@ const (
 	LOGS             = "logs"
 	FILE_TREE_VIEW   = "file_tree_modal"
 	ADD_FOLDER       = "add_folder_modal"
+	DELETE_NODE      = "delete_node"
 )
 
 const (

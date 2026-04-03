@@ -78,6 +78,17 @@ func (c *Collection) RestoreOpenPaths(openPaths map[string]bool) {
 	restore(c.Files)
 }
 
+// DeletePath removes a file or directory from the collection root and
+// reloads the collection from disk. The path is relative to the collection root.
+func (c *Collection) DeletePath(relPath string) error {
+	fullPath := filepath.Join(c.filePath, relPath)
+	if err := os.RemoveAll(fullPath); err != nil {
+		return fmt.Errorf("failed to delete %s: %w", relPath, err)
+	}
+	c.LoadCollectionFiles()
+	return nil
+}
+
 // LoadCollectionFiles reads the collection root directory from disk and
 // rebuilds the Files tree. All directory nodes start with Open=false.
 func (c *Collection) LoadCollectionFiles() {
