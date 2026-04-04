@@ -13,6 +13,9 @@ const (
 	ADD_FOLDER       = "add_folder_modal"
 	DELETE_NODE      = "delete_node"
 	ADD_FILE         = "add_file_modal"
+	ADD_FILE_METHOD  = "add_file_method"
+	ADD_FILE_NAME    = "add_file_name"
+	ADD_FILE_URL     = "add_file_url"
 	EDIT_FOLDER      = "edit_folder_modal"
 	EDIT_FILE        = "edit_file_modal"
 )

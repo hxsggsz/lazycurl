@@ -92,8 +92,8 @@ func (c *Collection) DeletePath(relPath string) error {
 }
 
 // AddFile creates a new JSON request file at the specified relative path.
-// The file contains a default HTTP request structure with the given method.
-func (c *Collection) AddFile(relPath string) error {
+// The file contains a default HTTP request structure with the given method and url.
+func (c *Collection) AddFile(relPath, method, url string) error {
 	if !strings.HasSuffix(relPath, ".json") {
 		relPath = relPath + ".json"
 	}
@@ -105,8 +105,8 @@ func (c *Collection) AddFile(relPath string) error {
 	}
 
 	requestData := map[string]interface{}{
-		"method":  "GET",
-		"url":     "",
+		"method":  method,
+		"url":     url,
 		"headers": map[string]string{},
 		"body":    "",
 	}
