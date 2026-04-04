@@ -55,6 +55,7 @@ func layout(collection *collection.Collection) func(g *gocui.Gui) error {
 		keyboard.RegisterGlobalNumericNavigation(g)
 		keyboard.RegisterGlobalSubmit(g)
 		keyboard.RegisterGlobalViewNavigation(g)
+		keyboard.RegisterGlobalMouseNavigation(g)
 		helper.ChangeViewFrame(g)
 		config.ShowCursor(g)
 

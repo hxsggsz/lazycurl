@@ -18,6 +18,8 @@ func InitLayout(collectionPath string) {
 	}
 	defer g.Close()
 
+	g.Mouse = true
+
 	log.SetOutput(&output.LogViewWriter{Gui: g})
 	clt := collection.NewCollection(collectionPath)
 	clt.LoadCollectionFiles()
