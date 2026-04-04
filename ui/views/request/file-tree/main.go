@@ -77,7 +77,7 @@ func initFileTreeModal(g *gocui.Gui, maxX, maxY int, fullScreen bool, fm *fm.Fil
 			return nil
 		})
 
-		g.SetKeybinding(views.FILE_TREE_VIEW, gocui.KeyCtrlN, gocui.ModNone, toggleAddFileModal(fm))
+		g.SetKeybinding(views.FILE_TREE_VIEW, gocui.KeyCtrlN, gocui.ModNone, toggleAddFileModal())
 
 		g.SetKeybinding(views.FILE_TREE_VIEW, gocui.KeyCtrlR, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
 			node, err := fm.GetSelectedNode(g)

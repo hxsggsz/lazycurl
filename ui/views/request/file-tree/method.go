@@ -12,10 +12,11 @@ import (
 var addFileMethods = []string{request.GET, request.POST, request.PUT, request.DELETE, request.HEAD, request.PATCH, request.OPTIONS}
 
 func methodSelectInput(g *gocui.Gui, x0, y0 int) error {
-	mv, err := g.SetView(views.ADD_FILE_METHOD, x0+2, y0+2, x0+11, y0+4, 0)
+	mv, err := g.SetView(views.ADD_FILE_METHOD, x0+2, y0+5, x0+11, y0+7, 0)
 	if err != nil {
 		if err != gocui.ErrUnknownView {
-			return err }
+			return err
+		}
 		mv.Title = "Method"
 		mv.Frame = true
 		mv.FrameColor = gocui.ColorWhite
@@ -65,7 +66,6 @@ func openAddFileMethodModal(g *gocui.Gui, v *gocui.View) error {
 	}
 	return nil
 }
-
 
 func selectAddFileMethod(g *gocui.Gui, v *gocui.View) error {
 	_, cy := v.Cursor()
