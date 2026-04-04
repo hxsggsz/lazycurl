@@ -26,29 +26,13 @@ func addFile(g *gocui.Gui, maxX, maxY int, fileManager *fm.FileManager) error {
 		v.TitleColor = gocui.ColorCyan
 		v.Visible = false
 	}
+
 	requestNameInput(g, x0, x1, y0)
+	methodSelectInput(g, x0, y0)
+	requestNameInput(g, x0, x1, y0)
+
 	g.SetKeybinding(views.ADD_FILE, gocui.KeyCtrlQ, gocui.ModNone, closeAddFileModal)
 	g.SetKeybinding(views.ADD_FILE, gocui.KeyEsc, gocui.ModNone, closeAddFileModal)
-
-	return nil
-}
-
-func requestNameInput(g *gocui.Gui, x0, x1, y0 int) error {
-	nameV, err := g.SetView(views.ADD_FILE_NAME, x0+2, y0+2, x1-2, y0+4, 0)
-	if err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		nameV.Editable = true
-		nameV.Title = "Request Name:"
-		nameV.FrameColor = gocui.ColorWhite
-		nameV.TitleColor = gocui.ColorWhite
-		nameV.Visible = false
-	}
-
-	g.SetKeybinding(views.ADD_FILE_NAME, gocui.KeyTab, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
-		return nil
-	})
 
 	return nil
 }
@@ -65,11 +49,21 @@ func toggleAddFileModal(fileManager *fm.FileManager) func(*gocui.Gui, *gocui.Vie
 			if nameV, err := g.View(views.ADD_FILE_NAME); err == nil {
 				nameV.Visible = false
 			}
+			if methodV, err := g.View(views.ADD_FILE_METHOD); err == nil {
+				methodV.Visible = false
+			}
+			g.DeleteView("add_file_method_modal")
 			g.SetCurrentView(views.FILE_TREE_VIEW)
 			return nil
 		}
 
 		outerV.Visible = true
+
+		if methodV, err := g.View(views.ADD_FILE_METHOD); err == nil {
+			methodV.Visible = true
+			methodV.FrameColor = gocui.ColorGreen
+			methodV.TitleColor = gocui.ColorGreen
+		}
 
 		if nameV, err := g.View(views.ADD_FILE_NAME); err == nil {
 			nameV.Clear()
@@ -80,7 +74,8 @@ func toggleAddFileModal(fileManager *fm.FileManager) func(*gocui.Gui, *gocui.Vie
 
 		g.SetViewOnTop(views.ADD_FILE)
 		g.SetViewOnTop(views.ADD_FILE_NAME)
-		g.SetCurrentView(views.ADD_FILE_NAME)
+		g.SetViewOnTop(views.ADD_FILE_METHOD)
+		g.SetCurrentView(views.ADD_FILE_METHOD)
 
 		return nil
 	}
@@ -93,6 +88,10 @@ func closeAddFileModal(g *gocui.Gui, v *gocui.View) error {
 	if nameV, err := g.View(views.ADD_FILE_NAME); err == nil {
 		nameV.Visible = false
 	}
+	if methodV, err := g.View(views.ADD_FILE_METHOD); err == nil {
+		methodV.Visible = false
+	}
+	g.DeleteView("add_file_method_modal")
 	g.SetCurrentView(views.FILE_TREE_VIEW)
 	return nil
 }
