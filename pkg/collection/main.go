@@ -124,6 +124,28 @@ func (c *Collection) AddFile(relPath, method, url string) error {
 	return nil
 }
 
+// AddFileWithNode creates a new JSON request file relative to the selected node.
+// If the selected node is a directory, the file is created in its parent directory.
+// If the selected node is a file, the file is created in the same directory.
+func (c *Collection) AddFileWithNode(fileName, method, url, selectedNodePath string) error {
+	if fileName == "" {
+		return fmt.Errorf("file name is required")
+	}
+
+	if !strings.HasSuffix(fileName, ".json") {
+		fileName = fileName + ".json"
+	}
+
+	parentDir := filepath.Dir(selectedNodePath)
+
+	rel, err := filepath.Rel(c.filePath, parentDir)
+	if err != nil || rel == "." {
+		return c.AddFile(fileName, method, url)
+	}
+
+	return c.AddFile(filepath.Join(rel, fileName), method, url)
+}
+
 // RenameNode renames a file or directory in the collection and reloads.
 // oldRelPath is relative to the collection root, newName is just the new name (not a path).
 func (c *Collection) RenameNode(oldRelPath, newName string) error {

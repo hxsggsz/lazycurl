@@ -16,6 +16,7 @@ const (
 	ADD_FILE_METHOD  = "add_file_method"
 	ADD_FILE_NAME    = "add_file_name"
 	ADD_FILE_URL     = "add_file_url"
+	ADD_FILE_BUTTONS = "add_file_buttons"
 	EDIT_FOLDER      = "edit_folder_modal"
 	EDIT_FILE        = "edit_file_modal"
 )
