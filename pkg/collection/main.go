@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 )
 
 // FileNode represents a file or directory in the collection tree.
@@ -26,13 +27,20 @@ type FileNode struct {
 // Files holds the current tree of FileNodes loaded from disk.
 // filePath is the root directory path for the collection.
 type Collection struct {
-	Files    []FileNode
-	filePath string
+	Files       []FileNode
+	filePath   string
+	methodCache map[string]string
+	mu         sync.RWMutex
+	onCacheReady func()  // callback for UI refresh
+	cacheLoading bool    // NEW: tracks if cache is still loading
 }
 
 // NewCollection creates a new Collection rooted at the given directory path.
 func NewCollection(filePath string) *Collection {
-	return &Collection{filePath: filePath}
+	return &Collection{
+		filePath:    filePath,
+		methodCache: make(map[string]string),
+	}
 }
 
 // AddFolders creates a nested directory structure within the collection root.
@@ -104,7 +112,7 @@ func (c *Collection) AddFile(relPath, method, url string) error {
 		return fmt.Errorf("failed to create directory for %s: %w", relPath, err)
 	}
 
-	requestData := map[string]interface{}{
+	requestData := map[string]any{
 		"method":  method,
 		"url":     url,
 		"headers": map[string]string{},
@@ -166,6 +174,65 @@ func (c *Collection) GetRootPath() string {
 	return c.filePath
 }
 
+func (c *Collection) SetOnCacheReady(callback func()) {
+	c.onCacheReady = callback
+}
+
+func (c *Collection) IsCacheLoading() bool {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.cacheLoading
+}
+
+func (c *Collection) GetMethod(filePath string) string {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.methodCache[filePath]
+}
+
+func (c *Collection) buildMethodCache() {
+	c.mu.Lock()
+	c.cacheLoading = true
+	c.mu.Unlock()
+
+	filepath.Walk(c.filePath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return nil
+		}
+		if strings.HasSuffix(info.Name(), ".json") {
+			if method := extractMethod(path); method != "" {
+				c.mu.Lock()
+				c.methodCache[path] = strings.TrimSpace(method)
+				c.mu.Unlock()
+			}
+		}
+		return nil
+	})
+
+	c.mu.Lock()
+	c.cacheLoading = false
+	c.mu.Unlock()
+
+	if c.onCacheReady != nil {
+		c.onCacheReady()
+	}
+}
+
+func extractMethod(filePath string) string {
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return ""
+	}
+	var result map[string]any
+	if err := json.Unmarshal(data, &result); err != nil {
+		return ""
+	}
+	if m, ok := result["method"].(string); ok {
+		return strings.ToUpper(m)
+	}
+	return ""
+}
+
 // LoadCollectionFiles reads the collection root directory from disk and
 // rebuilds the Files tree. All directory nodes start with Open=false.
 func (c *Collection) LoadCollectionFiles() {
@@ -177,6 +244,8 @@ func (c *Collection) LoadCollectionFiles() {
 
 	log.Println(nodes)
 	c.Files = nodes
+
+	go c.buildMethodCache()
 }
 
 // buildTree recursively constructs a FileNode tree from the filesystem

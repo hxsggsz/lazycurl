@@ -44,7 +44,7 @@ func (fm *FileManager) ToggleFileTree(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-// renderTree clears and re-renders the file tree view from the flat item list.
+// RenderTree clears and re-renders the file tree view from the flat item list.
 func (fm *FileManager) RenderTree(v *gocui.View) {
 	oldX, oldY := v.Cursor()
 	v.Clear()
@@ -52,9 +52,33 @@ func (fm *FileManager) RenderTree(v *gocui.View) {
 		indent := strings.Repeat("  ", item.Level)
 		if !item.Node.IsDir {
 
-			fileLine := indent + " " + item.Node.Name
-			formatedFile := utils.FormatLineFullWidth(v, fileLine)
-			fmt.Fprintf(v, "%s\n", formatedFile)
+			name := item.Node.Name
+			if before, ok :=strings.CutSuffix(name, ".json"); ok  {
+				name = before
+			}
+
+			method := fm.Collection.GetMethod(item.Node.Path)
+			isLoading := fm.Collection.IsCacheLoading()
+
+			if method != "" {
+				tagColor := getMethodColor(method)
+				tag := tagColor + "[" + method + "]" + views.RESET
+				fileLine := indent + " " + tag + " " + name
+				formatedFile := utils.FormatLineFullWidth(v, fileLine)
+
+				fmt.Fprintf(v, "%s\n", formatedFile)
+			} else if isLoading {
+				// show loading indicator like "[...]" in yellow
+				tag := views.YELLOW + "[...]" + views.RESET
+				fileLine := indent + " " + tag + " " + name
+				formatedFile := utils.FormatLineFullWidth(v, fileLine)
+
+				fmt.Fprintf(v, "%s\n", formatedFile)
+			} else {
+				fileLine := indent + " " + name
+				formatedFile := utils.FormatLineFullWidth(v, fileLine)
+				fmt.Fprintf(v, "%s\n", formatedFile)
+			}
 			continue
 		}
 
@@ -71,7 +95,7 @@ func (fm *FileManager) RenderTree(v *gocui.View) {
 	v.SetCursor(oldX, oldY)
 }
 
-// rebuildFlatList flattens the hierarchical file tree into a linear slice
+// RebuildFlatList flattens the hierarchical file tree into a linear slice
 // for rendering, respecting the Open state of directory nodes.
 func (fm *FileManager) RebuildFlatList() {
 	fm.flatItems = []flatItem{}
@@ -89,7 +113,7 @@ func (fm *FileManager) RebuildFlatList() {
 	flatten(fm.Collection.Files, 0)
 }
 
-// toggleFolder expands or collapses a directory node at the current cursor position.
+// ToggleFolder expands or collapses a directory node at the current cursor position.
 func (fm *FileManager) ToggleFolder(g *gocui.Gui, v *gocui.View) error {
 	_, cy := v.Cursor()
 	_, oy := v.Origin()
@@ -106,7 +130,7 @@ func (fm *FileManager) ToggleFolder(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-// setupModalKeys registers keybindings for the file tree view.
+// SetupModalKeys registers keybindings for the file tree view.
 func (fm *FileManager) SetupModalKeys(g *gocui.Gui) error {
 	g.SetKeybinding(views.FILE_TREE_VIEW, gocui.KeyEnter, gocui.ModNone, fm.ToggleFolder)
 	g.SetKeybinding(views.FILE_TREE_VIEW, gocui.KeySpace, gocui.ModNone, fm.ToggleFolder)
@@ -142,4 +166,22 @@ func (fm *FileManager) GetSelectedNode(g *gocui.Gui) (*collection.FileNode, erro
 		return nil, fmt.Errorf("no item selected")
 	}
 	return fm.flatItems[idx].Node, nil
+}
+
+// getMethodColor returns the color code for the given HTTP method.
+func getMethodColor(method string) string {
+	switch strings.ToUpper(method) {
+	case "GET":
+		return views.METHOD_GET
+	case "POST":
+		return views.METHOD_POST
+	case "PUT":
+		return views.METHOD_PUT
+	case "DELETE":
+		return views.METHOD_DELETE
+	case "PATCH":
+		return views.METHOD_PATCH
+	default:
+		return views.RESET
+	}
 }

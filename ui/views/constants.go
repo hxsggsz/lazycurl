@@ -39,3 +39,11 @@ const (
 	CYAN   = "\033[36m"
 	BLUE   = "\033[34m"
 )
+
+const (
+	METHOD_GET    = "\033[32m" // green
+	METHOD_POST   = "\033[34m" // blue
+	METHOD_PUT    = "\033[33m" // yellow
+	METHOD_DELETE = "\033[31m" // red
+	METHOD_PATCH  = "\033[35m" // magenta
+)
